@@ -54,8 +54,11 @@ module.exports = {
           '100%': { opacity: '1' },
         },
       },
+      container: {
+        center: true,
+        padding: '1rem',
+      },
     },
   },
   plugins: [],
 }
-
