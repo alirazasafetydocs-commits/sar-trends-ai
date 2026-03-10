@@ -49,8 +49,11 @@
 - [x] Add API service layer
 - [x] Update build scripts
 
-## Phase 6: Documentation
+## Phase 6: Documentation & Deployment
 - [x] Create deployment instructions
 - [x] Create VS Code setup instructions
 - [x] Create install scripts
+- [x] Push code to GitHub
+- [x] Deploy to Vercel
+- [x] Deploy backend to Render
 
