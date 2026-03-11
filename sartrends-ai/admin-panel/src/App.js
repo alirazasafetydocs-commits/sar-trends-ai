@@ -1,14 +1,123 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { 
   LayoutDashboard, Users, CreditCard, FileText, Settings, 
   BarChart3, Package, MessageSquare, Palette, Image, Video,
   Menu, X, LogOut, Check, XCircle, Edit, Trash2, Upload,
-  TrendingUp, DollarSign, UserCheck, FilePlus
+  TrendingUp, DollarSign, UserCheck, FilePlus, Eye, EyeOff, Lock
 } from 'lucide-react';
 
+const API_URL = 'http://localhost:5000/api';
+
+// Login Page Component
+function LoginPage({ onLogin }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+      if (response.data.user.isAdmin) {
+        localStorage.setItem('adminToken', response.data.token);
+        localStorage.setItem('adminUser', JSON.stringify(response.data.user));
+        onLogin(response.data.user);
+      } else {
+        setError('Access denied. Admin only.');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-dark-900 flex items-center justify-center px-4">
+      <div className="absolute inset-0 bg-grid" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
+      
+      <div className="relative z-10 w-full max-w-md">
+        <div className="glass-card p-8">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold">
+              <span className="text-primary">SAR</span>
+              <span className="text-white">Trends Admin</span>
+            </h1>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            {error && (
+              <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-400 text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input"
+                placeholder="admin@sartrends.store"
+                required
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="input pr-12"
+                  placeholder="Enter password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full disabled:opacity-50"
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+
+          <div className="mt-6 p-4 bg-dark-800 rounded-xl">
+            <p className="text-sm text-gray-400 text-center">Demo Credentials:</p>
+            <p className="text-xs text-gray-500 text-center mt-1">admin@sartrends.store / Admin@123</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Sidebar Component
-function Sidebar({ activePage, setActivePage, isOpen, setIsOpen }) {
+function Sidebar({ activePage, setActivePage, isOpen, setIsOpen, onLogout }) {
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { id: 'users', icon: Users, label: 'Users' },
@@ -45,7 +154,7 @@ function Sidebar({ activePage, setActivePage, isOpen, setIsOpen }) {
         ))}
       </nav>
       <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-dark-700">
-        <button className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-xl">
+        <button onClick={onLogout} className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-xl">
           <LogOut className="w-5 h-5" />
           Logout
         </button>
@@ -716,6 +825,30 @@ function DocumentsPage() {
 function App() {
   const [activePage, setActivePage] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [adminUser, setAdminUser] = useState(null);
+
+  useEffect(() => {
+    // Check for existing admin session
+    const token = localStorage.getItem('adminToken');
+    const user = localStorage.getItem('adminUser');
+    if (token && user) {
+      setAdminUser(JSON.parse(user));
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = (user) => {
+    setAdminUser(user);
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
+    setAdminUser(null);
+    setIsLoggedIn(false);
+  };
 
   const renderPage = () => {
     switch (activePage) {
@@ -732,9 +865,13 @@ function App() {
     }
   };
 
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
   return (
     <div className="min-h-screen bg-dark-900">
-      <Sidebar activePage={activePage} setActivePage={setActivePage} isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <Sidebar activePage={activePage} setActivePage={setActivePage} isOpen={sidebarOpen} setIsOpen={setSidebarOpen} onLogout={handleLogout} />
       
       <main className="lg:ml-64 min-h-screen">
         <header className="sticky top-0 z-30 bg-dark-900/80 backdrop-blur-lg border-b border-dark-700 px-6 py-4">
@@ -745,9 +882,9 @@ function App() {
             <div className="ml-auto flex items-center gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
-                  <span className="text-sm font-bold">A</span>
+                  <span className="text-sm font-bold">{adminUser?.name?.charAt(0) || 'A'}</span>
                 </div>
-                <span className="text-sm hidden sm:inline">Admin</span>
+                <span className="text-sm hidden sm:inline">{adminUser?.name || 'Admin'}</span>
               </div>
             </div>
           </div>
