@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { FileText, Shield, Globe, Mail, ArrowRight, CheckCircle } from 'lucide-react'
 
 const tools = [
-  {
+{
     id: 'ats-resume',
     icon: FileText,
     title: 'ATS Resume Generator',
@@ -18,7 +18,7 @@ const tools = [
       'Real-time Preview'
     ],
     color: 'from-blue-500 to-cyan-500',
-    link: 'https://ai.sartrends.store'
+    link: '/resume-generator'
   },
   {
     id: 'cover-letter',
