@@ -542,7 +542,7 @@ function BlogPage() {
   );
 }
 
-// Appearance Page
+// Appearance Page with Image Upload
 function AppearancePage() {
   const [settings, setSettings] = useState({
     primaryColor: '#6366f1',
@@ -551,9 +551,84 @@ function AppearancePage() {
     heroSubtitle: 'Create ATS resumes, HSE documents and websites instantly with AI.',
   });
 
+  const [heroImages, setHeroImages] = useState([
+    { id: 1, url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop', title: 'Resume Builder' },
+    { id: 2, url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop', title: 'HSE Documentation' },
+    { id: 3, url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop', title: 'Website Builder' },
+  ]);
+  
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    handleImageUpload(files);
+  };
+
+  const handleImageUpload = async (files) => {
+    setUploading(true);
+    
+    // Simulate upload - in production, upload to server/cloud storage
+    for (const file of files) {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setHeroImages(prev => [...prev, {
+            id: Date.now() + Math.random(),
+            url: e.target.result,
+            title: file.name.replace(/\.[^/.]+$/, '')
+          }]);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+    
+    setTimeout(() => {
+      setUploading(false);
+    }, 1000);
+  };
+
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    handleImageUpload(files);
+  };
+
+  const removeImage = (id) => {
+    setHeroImages(prev => prev.filter(img => img.id !== id));
+  };
+
+  const saveSettings = () => {
+    // Save to localStorage for demo - in production, save to database
+    localStorage.setItem('siteSettings', JSON.stringify(settings));
+    localStorage.setItem('heroImages', JSON.stringify(heroImages));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Website Appearance</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Website Appearance</h1>
+        <button 
+          onClick={saveSettings}
+          className={`btn-primary flex items-center gap-2 ${saved ? 'bg-green-500' : ''}`}
+        >
+          {saved ? <Check className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
+          {saved ? 'Saved!' : 'Save Changes'}
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="glass-card p-6">
@@ -562,15 +637,35 @@ function AppearancePage() {
             <div>
               <label className="block text-sm text-gray-400 mb-2">Primary Color</label>
               <div className="flex gap-3">
-                <input type="color" value={settings.primaryColor} className="w-16 h-10 rounded" />
-                <input type="text" value={settings.primaryColor} className="input flex-1" />
+                <input 
+                  type="color" 
+                  value={settings.primaryColor} 
+                  onChange={(e) => setSettings({...settings, primaryColor: e.target.value})}
+                  className="w-16 h-10 rounded cursor-pointer" 
+                />
+                <input 
+                  type="text" 
+                  value={settings.primaryColor} 
+                  onChange={(e) => setSettings({...settings, primaryColor: e.target.value})}
+                  className="input flex-1" 
+                />
               </div>
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-2">Secondary Color</label>
               <div className="flex gap-3">
-                <input type="color" value={settings.secondaryColor} className="w-16 h-10 rounded" />
-                <input type="text" value={settings.secondaryColor} className="input flex-1" />
+                <input 
+                  type="color" 
+                  value={settings.secondaryColor} 
+                  onChange={(e) => setSettings({...settings, secondaryColor: e.target.value})}
+                  className="w-16 h-10 rounded cursor-pointer" 
+                />
+                <input 
+                  type="text" 
+                  value={settings.secondaryColor} 
+                  onChange={(e) => setSettings({...settings, secondaryColor: e.target.value})}
+                  className="input flex-1" 
+                />
               </div>
             </div>
           </div>
@@ -581,37 +676,139 @@ function AppearancePage() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm text-gray-400 mb-2">Hero Title</label>
-              <input type="text" value={settings.heroTitle} className="input" />
+              <input 
+                type="text" 
+                value={settings.heroTitle} 
+                onChange={(e) => setSettings({...settings, heroTitle: e.target.value})}
+                className="input" 
+              />
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-2">Hero Subtitle</label>
-              <textarea value={settings.heroSubtitle} className="input h-24" />
+              <textarea 
+                value={settings.heroSubtitle} 
+                onChange={(e) => setSettings({...settings, heroSubtitle: e.target.value})}
+                className="input h-24" 
+              />
             </div>
           </div>
         </div>
 
         <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Hero Images</h3>
-          <div className="border-2 border-dashed border-dark-600 rounded-xl p-8 text-center">
-            <Image className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-            <p className="text-gray-400 mb-2">Drag and drop images here</p>
-            <button className="btn-primary mt-2">Upload Images</button>
-            <p className="text-xs text-gray-500 mt-2">Images will rotate every 15 seconds</p>
+          <h3 className="font-semibold mb-4">Hero Images Management</h3>
+          <div 
+            className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
+              isDragging ? 'border-primary bg-primary/10' : 'border-dark-600'
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <input 
+              type="file" 
+              id="imageUpload" 
+              multiple 
+              accept="image/*" 
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+            <label htmlFor="imageUpload" className="cursor-pointer">
+              {uploading ? (
+                <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
+              ) : (
+                <Image className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+              )}
+              <p className="text-gray-400 mb-2">
+                {uploading ? 'Uploading...' : 'Drag and drop images here'}
+              </p>
+              <button type="button" className="btn-primary mt-2">
+                Browse Files
+              </button>
+              <p className="text-xs text-gray-500 mt-2">Supports: JPG, PNG, GIF, WebP</p>
+            </label>
           </div>
+          
+          {/* Image Preview Grid */}
+          <div className="mt-4">
+            <h4 className="text-sm text-gray-400 mb-3">Uploaded Images ({heroImages.length})</h4>
+            <div className="grid grid-cols-3 gap-3">
+              {heroImages.map((img) => (
+                <div key={img.id} className="relative group">
+                  <img 
+                    src={img.url} 
+                    alt={img.title}
+                    className="w-full h-20 object-cover rounded-lg"
+                  />
+                  <button
+                    onClick={() => removeImage(img.id)}
+                    className="absolute top-1 right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="w-4 h-4 text-white" />
+                  </button>
+                  <p className="text-xs text-gray-400 mt-1 truncate">{img.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <p className="text-xs text-gray-500 mt-3">
+            Images will rotate automatically every 5 seconds on the homepage
+          </p>
         </div>
 
         <div className="glass-card p-6">
           <h3 className="font-semibold mb-4">Hero Video</h3>
           <div className="border-2 border-dashed border-dark-600 rounded-xl p-8 text-center">
             <Video className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-            <p className="text-gray-400 mb-2">Upload background video</p>
-            <button className="btn-primary mt-2">Upload Video</button>
+            <p className="text-gray-400 mb-2">Upload background video (optional)</p>
+            <input 
+              type="file" 
+              id="videoUpload" 
+              accept="video/*" 
+              className="hidden"
+            />
+            <label htmlFor="videoUpload" className="btn-primary mt-2 inline-block cursor-pointer">
+              Upload Video
+            </label>
+            <p className="text-xs text-gray-500 mt-2">Recommended: MP4, WebM (max 50MB)</p>
+          </div>
+          
+          {/* 3D Effects Toggle */}
+          <div className="mt-6">
+            <h4 className="text-sm text-gray-400 mb-3">3D Effects</h4>
+            <div className="space-y-3">
+              <label className="flex items-center justify-between p-3 bg-dark-800 rounded-lg cursor-pointer">
+                <span>Enable 3D Background</span>
+                <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
+              </label>
+              <label className="flex items-center justify-between p-3 bg-dark-800 rounded-lg cursor-pointer">
+                <span>Auto-rotate Objects</span>
+                <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
+              </label>
+              <label className="flex items-center justify-between p-3 bg-dark-800 rounded-lg cursor-pointer">
+                <span>Particle Effects</span>
+                <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
+              </label>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-end">
-        <button className="btn-primary">Save Changes</button>
+      {/* Preview Section */}
+      <div className="glass-card p-6">
+        <h3 className="font-semibold mb-4">Live Preview</h3>
+        <div className="bg-dark-800 rounded-xl p-4 h-48 flex items-center justify-center overflow-hidden relative">
+          <div className="absolute inset-0 bg-grid opacity-30" />
+          <div className="relative z-10 text-center">
+            <h4 className="text-xl font-bold gradient-text mb-2">{settings.heroTitle}</h4>
+            <p className="text-gray-400 text-sm">{settings.heroSubtitle}</p>
+            <div className="flex gap-2 mt-3 justify-center">
+              {heroImages.slice(0, 3).map((img, i) => (
+                <img key={i} src={img.url} alt="" className="w-12 h-12 rounded object-cover" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import dynamic from 'next/dynamic'
+import ImageCarousel from '@/components/ImageCarousel'
 import { 
   Brain, 
   Shield, 
@@ -13,8 +15,19 @@ import {
   Star,
   Users,
   TrendingUp,
-  Award
+  Award,
+  Sparkles
 } from 'lucide-react'
+
+// Dynamic import for 3D scene to avoid SSR issues
+const Scene3D = dynamic(() => import('@/components/Scene3D'), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+    </div>
+  )
+})
 
 const features = [
   {
@@ -108,14 +121,16 @@ const pricingPlans = [
 export default function HomePage() {
   return (
     <div className="bg-dark-900">
-      {/* Hero Section */}
+      {/* Hero Section with 3D Background */}
       <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        {/* 3D Scene Background */}
+        <Scene3D />
+        
         {/* Background Effects */}
-        <div className="absolute inset-0 bg-grid" />
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/30 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-neon-pink/10 rounded-full blur-3xl" />
-
+        <div className="absolute inset-0 bg-grid z-[1]" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl z-[2]" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl z-[2]" />
+        
         <div className="container-custom relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
@@ -125,10 +140,15 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
               className="text-center lg:text-left"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: 'spring' }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6"
+              >
+                <Sparkles className="w-4 h-4 text-primary" />
                 <span className="text-sm text-primary font-medium">AI-Powered Professional Tools</span>
-              </div>
+              </motion.div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                 Create ATS Resumes,{' '}
@@ -166,49 +186,47 @@ export default function HomePage() {
               </div>
             </motion.div>
 
-            {/* Right Content - Floating Elements */}
+            {/* Right Content - Image Carousel */}
             <motion.div 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative hidden lg:block"
+              className="relative hidden lg:block h-[500px]"
             >
-              <div className="relative w-full aspect-square">
-                {/* Main Card */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 glass-card p-6 float-animation">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mb-4">
-                    <Brain className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">AI Resume Builder</h3>
-                  <p className="text-gray-400 text-sm">Generate ATS-optimized resumes in seconds</p>
-                  <div className="mt-4 flex gap-2">
-                    <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs">Pro</span>
-                    <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs">AI Powered</span>
-                  </div>
-                </div>
-
-                {/* Floating Cards */}
-                <div className="absolute top-10 right-10 w-48 glass-card p-4 float-animation float-delay-1">
-                  <FileText className="w-8 h-8 text-cyan-400 mb-2" />
-                  <p className="text-sm font-medium">HSE Documents</p>
-                  <p className="text-xs text-gray-400">RAMS, JSA, Risk Assessment</p>
-                </div>
-
-                <div className="absolute bottom-20 left-10 w-48 glass-card p-4 float-animation float-delay-2">
-                  <Globe className="w-8 h-8 text-purple-400 mb-2" />
-                  <p className="text-sm font-medium">Website Builder</p>
-                  <p className="text-xs text-gray-400">AI-generated websites</p>
-                </div>
-
-                <div className="absolute top-20 left-0 w-40 glass-card p-3 float-animation float-delay-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                    </div>
-                    <span className="text-sm font-medium">98% Success</span>
-                  </div>
-                </div>
+              <div className="absolute inset-0 glass-card p-2">
+                <ImageCarousel autoPlay={true} interval={5000} />
               </div>
+              
+              {/* Floating Stats Card */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="absolute -bottom-6 -left-6 glass-card p-4 z-20"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-green-500" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">98%</p>
+                    <p className="text-sm text-gray-400">Success Rate</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Floating Badge */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.8 }}
+                className="absolute -top-4 -right-4 glass-card px-4 py-2 z-20"
+              >
+                <div className="flex items-center gap-2">
+                  <Brain className="w-5 h-5 text-primary" />
+                  <span className="font-semibold">AI Powered</span>
+                </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
