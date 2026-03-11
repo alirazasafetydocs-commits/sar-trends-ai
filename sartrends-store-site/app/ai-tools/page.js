@@ -5,65 +5,158 @@ import Link from 'next/link'
 import { FileText, Shield, Globe, Mail, ArrowRight, CheckCircle } from 'lucide-react'
 
 const tools = [
-{
+  {
     id: 'ats-resume',
     icon: FileText,
     title: 'ATS Resume Generator',
-    description: 'Create professional, ATS-optimized resumes that pass through applicant tracking systems with ease.',
-    features: [
-      'ATS-Optimized Formatting',
-      'Keyword Optimization',
-      'Industry Templates',
-      'Multiple Layout Options',
-      'Real-time Preview'
-    ],
+    description: 'Create professional, ATS-optimized resumes that pass through applicant tracking systems.',
+    features: ['ATS-Optimized', 'Keyword Optimization', 'Industry Templates', 'GPT-4 Powered'],
     color: 'from-blue-500 to-cyan-500',
+    link: '/resume-generator'
+  },
+  {
+    id: 'cv-uk',
+    icon: FileText,
+    title: 'CV Generator (UK)',
+    description: 'Create comprehensive CVs in UK/EU format with professional formatting.',
+    features: ['UK/EU Format', 'Detailed Sections', 'Achievement-focused', '2-3 Pages'],
+    color: 'from-indigo-500 to-blue-500',
     link: '/resume-generator'
   },
   {
     id: 'cover-letter',
     icon: Mail,
     title: 'Cover Letter Generator',
-    description: 'Write compelling cover letters that capture recruiters\' attention and land you interviews.',
-    features: [
-      'AI-Powered Writing',
-      'Custom Templates',
-      'Industry Variations',
-      'Quick Generation',
-      'Professional Tone'
-    ],
+    description: 'Write compelling cover letters with multiple tone options.',
+    features: ['AI-Powered', 'Multiple Tones', 'Industry Variations', 'Quick Generation'],
     color: 'from-orange-500 to-red-500',
     link: '/cover-letter'
   },
   {
-    id: 'hse',
+    id: 'follow-up',
+    icon: Mail,
+    title: 'Follow-up Letter',
+    description: 'Generate professional follow-up letters for job applications.',
+    features: ['Polite Follow-ups', 'Interview Thanks', 'Application Status', 'Professional'],
+    color: 'from-amber-500 to-orange-500',
+    link: '/cover-letter'
+  },
+  {
+    id: 'hse-risk',
     icon: Shield,
-    title: 'HSE Documents Generator',
-    description: 'Generate comprehensive HSE documents including Risk Assessments, RAMS, and Method Statements.',
-    features: [
-      'Risk Assessments',
-      'RAMS Documents',
-      'Method Statements',
-      'Toolbox Talks',
-      'Compliance Templates'
-    ],
+    title: 'Risk Assessment',
+    description: 'Generate comprehensive risk assessments following ISO 45001 and OSHA.',
+    features: ['ISO 45001', 'Risk Matrix', 'Control Measures', 'Emergency Procedures'],
     color: 'from-green-500 to-emerald-500',
+    link: '/hse-generator'
+  },
+  {
+    id: 'hse-rams',
+    icon: Shield,
+    title: 'RAMS Document',
+    description: 'Create detailed Risk Assessment and Method Statements.',
+    features: ['Complete RAMS', 'Method Statements', 'Safe Work', 'Compliance'],
+    color: 'from-teal-500 to-green-500',
+    link: '/hse-generator'
+  },
+  {
+    id: 'hse-method',
+    icon: Shield,
+    title: 'Method Statement',
+    description: 'Generate detailed method statements for construction projects.',
+    features: ['Step-by-step', 'Resource Planning', 'Quality Standards', 'Timeline'],
+    color: 'from-cyan-500 to-teal-500',
+    link: '/hse-generator'
+  },
+  {
+    id: 'hse-jsa',
+    icon: Shield,
+    title: 'Job Safety Analysis',
+    description: 'Create comprehensive JSAs for specific job tasks.',
+    features: ['Step Analysis', 'Hazard ID', 'Risk Ratings', 'OSHA Compliant'],
+    color: 'from-lime-500 to-green-500',
+    link: '/hse-generator'
+  },
+  {
+    id: 'hse-incident',
+    icon: Shield,
+    title: 'Incident Report',
+    description: 'Generate professional incident reports with root cause analysis.',
+    features: ['Root Cause', 'Corrective Actions', 'OSHA Recording', 'Legal Compliance'],
+    color: 'from-red-500 to-rose-500',
+    link: '/hse-generator'
+  },
+  {
+    id: 'hse-fire',
+    icon: Shield,
+    title: 'Fire Risk Assessment',
+    description: 'Create fire risk assessments following UK Fire Safety Order.',
+    features: ['UK Fire Safety', 'PAS 79', 'Risk Matrix', 'Emergency Planning'],
+    color: 'from-red-600 to-orange-500',
+    link: '/hse-generator'
+  },
+  {
+    id: 'hse-toolbox',
+    icon: Shield,
+    title: 'Toolbox Talk',
+    description: 'Generate engaging toolbox talks for safety meetings.',
+    features: ['5-10 Minutes', 'Interactive', 'Case Studies', 'Sign-off Sheets'],
+    color: 'from-yellow-500 to-amber-500',
     link: '/hse-generator'
   },
   {
     id: 'website',
     icon: Globe,
     title: 'AI Website Builder',
-    description: 'Create stunning, responsive websites in minutes with our AI-powered builder.',
-    features: [
-      'AI Content Generation',
-      'Responsive Design',
-      'SEO Optimized',
-      'Custom Branding',
-      'Multiple Templates'
-    ],
-    color: 'from-teal-500 to-cyan-500',
+    description: 'Create stunning website content with AI-powered generation.',
+    features: ['AI Content', 'Responsive Design', 'SEO Optimized', 'Multiple Pages'],
+    color: 'from-purple-500 to-pink-500',
     link: '/website-builder'
+  },
+  {
+    id: 'website-code',
+    icon: Globe,
+    title: 'Website Code Generator',
+    description: 'Generate complete HTML/CSS code for professional websites.',
+    features: ['Complete HTML/CSS', 'Responsive', 'Modern Design', 'Clean Code'],
+    color: 'from-violet-500 to-purple-500',
+    link: '/website-builder'
+  },
+  {
+    id: 'job-desc',
+    icon: FileText,
+    title: 'Job Description',
+    description: 'Create comprehensive job descriptions to attract candidates.',
+    features: ['Complete JD', 'Responsibilities', 'Requirements', 'Benefits'],
+    color: 'from-rose-500 to-pink-500',
+    link: '/ai-tools'
+  },
+  {
+    id: 'business-proposal',
+    icon: FileText,
+    title: 'Business Proposal',
+    description: 'Generate professional business proposals to win clients.',
+    features: ['Executive Summary', 'Scope', 'Pricing', 'Terms'],
+    color: 'from-emerald-500 to-teal-500',
+    link: '/ai-tools'
+  },
+  {
+    id: 'sop',
+    icon: FileText,
+    title: 'SOP Generator',
+    description: 'Create detailed Standard Operating Procedures.',
+    features: ['Step-by-step', 'Responsibilities', 'Quality Controls', 'Approvals'],
+    color: 'from-slate-500 to-gray-500',
+    link: '/ai-tools'
+  },
+  {
+    id: 'linkedin',
+    icon: FileText,
+    title: 'LinkedIn Optimizer',
+    description: 'Optimize your LinkedIn profile to attract recruiters.',
+    features: ['Keyword Optimization', 'Headline', 'Summary', 'SEO Tips'],
+    color: 'from-blue-600 to-indigo-500',
+    link: '/ai-tools'
   }
 ]
 
