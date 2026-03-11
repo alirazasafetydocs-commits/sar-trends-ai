@@ -33,55 +33,25 @@ const tools = [
       'Professional Tone'
     ],
     color: 'from-orange-500 to-red-500',
-    link: 'https://ai.sartrends.store'
+    link: '/cover-letter'
   },
   {
-    id: 'risk-assessment',
+    id: 'hse',
     icon: Shield,
-    title: 'Risk Assessment Generator',
-    description: 'Generate comprehensive risk assessments for your projects with our AI-powered tool.',
+    title: 'HSE Documents Generator',
+    description: 'Generate comprehensive HSE documents including Risk Assessments, RAMS, and Method Statements.',
     features: [
-      'Hazard Identification',
-      'Risk Matrix',
-      'Control Measures',
-      'Compliance Templates',
-      'Export to PDF'
+      'Risk Assessments',
+      'RAMS Documents',
+      'Method Statements',
+      'Toolbox Talks',
+      'Compliance Templates'
     ],
     color: 'from-green-500 to-emerald-500',
-    link: 'https://ai.sartrends.store'
+    link: '/hse-generator'
   },
   {
-    id: ' rams',
-    icon: Shield,
-    title: 'RAMS Generator',
-    description: 'Create detailed Risk Assessment and Method Statements (RAMS) for your operations.',
-    features: [
-      'Comprehensive RAMS',
-      'Method Statements',
-      'Safe Work Procedures',
-      'Emergency Procedures',
-      'Compliance Check'
-    ],
-    color: 'from-purple-500 to-pink-500',
-    link: 'https://ai.sartrends.store'
-  },
-  {
-    id: 'method-statement',
-    icon: FileText,
-    title: 'Method Statement Generator',
-    description: 'Generate detailed method statements for your construction and engineering projects.',
-    features: [
-      'Step-by-Step Procedures',
-      'Sequence of Works',
-      'Resource Requirements',
-      'Timeline Planning',
-      'Quality Standards'
-    ],
-    color: 'from-indigo-500 to-violet-500',
-    link: 'https://ai.sartrends.store'
-  },
-  {
-    id: 'website-builder',
+    id: 'website',
     icon: Globe,
     title: 'AI Website Builder',
     description: 'Create stunning, responsive websites in minutes with our AI-powered builder.',
@@ -93,7 +63,7 @@ const tools = [
       'Multiple Templates'
     ],
     color: 'from-teal-500 to-cyan-500',
-    link: 'https://ai.sartrends.store'
+    link: '/website-builder'
   }
 ]
 
