@@ -4,17 +4,13 @@ import { generateResume, generateCoverLetter, generateRiskAssessment, generateRA
 // Free trial configuration
 const FREE_TRIAL_LIMIT = 3;
 
-// Helper to get/set trial count from headers
+// Helper to get trial count from headers
 function getTrialCount(request) {
   const cookieHeader = request.headers.get('cookie');
   if (!cookieHeader) return 0;
   
   const match = cookieHeader.match(/trialCount=(\d+)/);
   return match ? parseInt(match[1]) : 0;
-}
-
-function setTrialCookie(trialCount) {
-  return `trialCount=${trialCount}; Path=/; Max-Age=31536000; SameSite=Lax`;
 }
 
 export async function POST(request) {
@@ -24,19 +20,22 @@ export async function POST(request) {
     
     let result = {};
     let content = '';
+    let useTemplate = true;
     
     // Check if OpenAI API key is available
-    const hasOpenAI = !!process.env.OPENAI_API_KEY;
+    let useAI = !!process.env.OPENAI_API_KEY;
     
     // Try AI generation if API key exists
-    if (hasOpenAI) {
+    if (useAI) {
       try {
         switch (type) {
           case 'resume':
             content = await generateResume(body);
+            useTemplate = false;
             break;
           case 'cover-letter':
             content = await generateCoverLetter(body);
+            useTemplate = false;
             break;
           case 'hse':
             if (documentType === ' rams' || documentType === 'RAMS') {
@@ -46,22 +45,21 @@ export async function POST(request) {
             } else {
               content = await generateRiskAssessment(body);
             }
+            useTemplate = false;
             break;
           case 'website':
             content = await generateWebsite(body);
+            useTemplate = false;
             break;
-          default:
-            throw new Error('Unknown type');
         }
       } catch (aiError) {
         console.error('AI generation failed, using template:', aiError);
-        // Fall back to templates
-        hasOpenAI = false;
+        useTemplate = true;
       }
     }
     
     // Use templates if no OpenAI or AI failed
-    if (!hasOpenAI || !content) {
+    if (useTemplate || !content) {
       switch (type) {
         case 'resume':
           content = getTemplateResume(body);
@@ -163,3 +161,4 @@ export async function GET(request) {
     hasTrialLeft: remaining > 0
   });
 }
+

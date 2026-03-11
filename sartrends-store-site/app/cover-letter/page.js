@@ -40,8 +40,11 @@ export default function CoverLetterPage() {
   }
 
   const copyToClipboard = () => {
-    if (result) {
-      navigator.clipboard.writeText(result.content.content)
+    if (result && result.content) {
+      const text = typeof result.content.generatedContent === 'string' 
+        ? result.content.generatedContent 
+        : JSON.stringify(result.content.generatedContent, null, 2)
+      navigator.clipboard.writeText(text)
       alert('Copied to clipboard!')
     }
   }
@@ -147,16 +150,16 @@ export default function CoverLetterPage() {
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm text-gray-400">Position</p>
-                    <p className="font-semibold">{result.content.position}</p>
+                    <p className="font-semibold">{result.content?.position}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Company</p>
-                    <p>{result.content.company}</p>
+                    <p>{result.content?.company}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Cover Letter</p>
                     <pre className="whitespace-pre-wrap text-sm bg-dark-800 p-4 rounded-lg mt-2">
-                      {result.content.content}
+                      {result.content?.generatedContent}
                     </pre>
                   </div>
                   
@@ -174,7 +177,10 @@ export default function CoverLetterPage() {
                 </div>
               )}
             </div>
+          </div>
         </motion.div>
       </div>
+    </div>
   )
 }
+

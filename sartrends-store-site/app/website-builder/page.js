@@ -49,10 +49,10 @@ export default function WebsiteBuilderPage() {
   }
 
   const copyToClipboard = () => {
-    if (result) {
-      const text = `Business: ${result.content.businessName}
-Industry: ${result.content.industry}
-Pages: ${result.content.pages.map(p => p.name).join(', ')}`
+    if (result && result.content) {
+      const text = typeof result.content.generatedContent === 'string' 
+        ? result.content.generatedContent 
+        : JSON.stringify(result.content.generatedContent, null, 2)
       navigator.clipboard.writeText(text)
       alert('Copied to clipboard!')
     }
@@ -166,22 +166,18 @@ Pages: ${result.content.pages.map(p => p.name).join(', ')}`
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm text-gray-400">Business Name</p>
-                    <p className="font-semibold">{result.content.businessName}</p>
+                    <p className="font-semibold">{result.content?.businessName}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Industry</p>
-                    <p>{result.content.industry}</p>
+                    <p>{result.content?.industry}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Pages Generated</p>
-                    <div className="space-y-2 mt-2">
-                      {result.content.pages && result.content.pages.map((page, i) => (
-                        <div key={i} className="bg-dark-800 p-3 rounded-lg">
-                          <p className="font-semibold text-primary">{page.name}</p>
-                          <p className="text-sm text-gray-400">{page.content}</p>
-                        </div>
-                      ))}
-                    </div>
+                    <p className="text-sm text-gray-400">Content</p>
+                    <pre className="whitespace-pre-wrap text-sm bg-dark-800 p-4 rounded-lg mt-2 max-h-64 overflow-y-auto">
+                      {result.content?.generatedContent}
+                    </pre>
+                  </div>
                   
                   <button
                     onClick={copyToClipboard}
@@ -197,7 +193,10 @@ Pages: ${result.content.pages.map(p => p.name).join(', ')}`
                 </div>
               )}
             </div>
+          </div>
         </motion.div>
       </div>
+    </div>
   )
 }
+
