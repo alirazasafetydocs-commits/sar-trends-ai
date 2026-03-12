@@ -7,57 +7,83 @@ import { ArrowRight, Calendar, User } from 'lucide-react'
 const posts = [
   {
     id: 1,
-    title: 'How to Create an ATS-Optimized Resume',
-    excerpt: 'Learn the secrets to passing through applicant tracking systems and getting your resume noticed.',
+    title: 'How to Create an ATS-Optimized Resume That Gets Noticed',
+    excerpt: 'Learn the secrets to passing through applicant tracking systems and getting your resume noticed by recruiters. Our comprehensive guide covers formatting, keywords, and content strategies.',
     category: 'Resume Tips',
     date: 'Jan 15, 2024',
     author: 'SAR Trends Team',
-    image: 'resume'
+    image: 'resume',
+    readTime: '8 min read'
   },
   {
     id: 2,
-    title: 'Essential HSE Documents for Construction Sites',
-    excerpt: 'A comprehensive guide to the HSE documentation required for construction projects.',
+    title: 'Complete Guide to HSE Documentation for Construction Projects',
+    excerpt: 'A comprehensive guide to the HSE documentation required for construction projects. Learn about RAMS, risk assessments, and safety protocols.',
     category: 'HSE',
     date: 'Jan 12, 2024',
     author: 'SAR Trends Team',
-    image: 'hse'
+    image: 'hse',
+    readTime: '12 min read'
   },
   {
     id: 3,
-    title: 'AI in Professional Document Creation',
-    excerpt: 'How artificial intelligence is revolutionizing the way we create professional documents.',
+    title: 'How AI is Revolutionizing Professional Document Creation',
+    excerpt: 'Discover how artificial intelligence is transforming the way we create resumes, cover letters, and business documents. Save time and improve quality.',
     category: 'AI Technology',
     date: 'Jan 10, 2024',
     author: 'SAR Trends Team',
-    image: 'ai'
+    image: 'ai',
+    readTime: '6 min read'
   },
   {
     id: 4,
-    title: 'Writing Effective Cover Letters',
-    excerpt: 'Tips and tricks to write cover letters that capture recruiters attention.',
+    title: 'Writing Cover Letters That Land Interviews',
+    excerpt: 'Expert tips and proven strategies to write cover letters that capture recruiters attention and help you stand out from other applicants.',
     category: 'Career Tips',
     date: 'Jan 8, 2024',
     author: 'SAR Trends Team',
-    image: 'cover'
+    image: 'cover',
+    readTime: '7 min read'
   },
   {
     id: 5,
-    title: 'Understanding RAMS Documents',
-    excerpt: 'Everything you need to know about Risk Assessment and Method Statements.',
+    title: 'Understanding RAMS Documents: A Complete Overview',
+    excerpt: 'Everything you need to know about Risk Assessment and Method Statements (RAMS). Templates, examples, and best practices included.',
     category: 'HSE',
     date: 'Jan 5, 2024',
     author: 'SAR Trends Team',
-    image: ' rams'
+    image: ' rams',
+    readTime: '10 min read'
   },
   {
     id: 6,
-    title: 'Building a Personal Brand with AI',
-    excerpt: 'How to use AI tools to build a strong professional personal brand.',
+    title: 'Building Your Personal Brand with AI Tools',
+    excerpt: 'How to leverage AI tools to build a strong professional personal brand and accelerate your career growth in 2024.',
     category: 'Career Tips',
     date: 'Jan 3, 2024',
     author: 'SAR Trends Team',
-    image: 'brand'
+    image: 'brand',
+    readTime: '5 min read'
+  },
+  {
+    id: 7,
+    title: 'Top 10 Resume Mistakes That Cost You Interviews',
+    excerpt: 'Avoid these common resume mistakes that automatically disqualify your application before it reaches human eyes.',
+    category: 'Resume Tips',
+    date: 'Jan 1, 2024',
+    author: 'SAR Trends Team',
+    image: 'resume',
+    readTime: '9 min read'
+  },
+  {
+    id: 8,
+    title: 'AI-Powered Website Building: The Future of Web Development',
+    excerpt: 'Learn how our AI website builder can create stunning, professional websites in minutes without coding knowledge.',
+    category: 'AI Technology',
+    date: 'Dec 28, 2023',
+    author: 'SAR Trends Team',
+    image: 'ai',
+    readTime: '6 min read'
   }
 ]
 

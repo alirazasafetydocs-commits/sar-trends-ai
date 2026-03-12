@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   LayoutDashboard, Users, CreditCard, FileText, Settings, 
   BarChart3, Package, MessageSquare, Palette, Image, Video,
-  Menu, X, LogOut, Check, XCircle, Edit, Trash2, Upload,
+  Menu, LogOut, Check, XCircle, Edit, Trash2, Upload,
   TrendingUp, DollarSign, UserCheck, FilePlus, Eye, EyeOff, Lock
 } from 'lucide-react';
 
@@ -22,7 +21,6 @@ function LoginPage({ onLogin }) {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       const response = await axios.post(`${API_URL}/auth/login`, { email, password });
       if (response.data.user.isAdmin) {
@@ -44,7 +42,6 @@ function LoginPage({ onLogin }) {
       <div className="absolute inset-0 bg-grid" />
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-      
       <div className="relative z-10 w-full max-w-md">
         <div className="glass-card p-8">
           <div className="text-center mb-8">
@@ -56,14 +53,12 @@ function LoginPage({ onLogin }) {
               <span className="text-white">Trends Admin</span>
             </h1>
           </div>
-
           <form onSubmit={handleSubmit}>
             {error && (
               <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-400 text-sm">
                 {error}
               </div>
             )}
-
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
               <input
@@ -75,7 +70,6 @@ function LoginPage({ onLogin }) {
                 required
               />
             </div>
-
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
               <div className="relative">
@@ -96,16 +90,10 @@ function LoginPage({ onLogin }) {
                 </button>
               </div>
             </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full disabled:opacity-50"
-            >
+            <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-50">
               {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
-
           <div className="mt-6 p-4 bg-dark-800 rounded-xl">
             <p className="text-sm text-gray-400 text-center">Demo Credentials:</p>
             <p className="text-xs text-gray-500 text-center mt-1">admin@sartrends.store / Admin@123</p>
@@ -143,9 +131,7 @@ function Sidebar({ activePage, setActivePage, isOpen, setIsOpen, onLogout }) {
             key={item.id}
             onClick={() => { setActivePage(item.id); setIsOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-              activePage === item.id 
-                ? 'bg-primary/20 text-primary' 
-                : 'text-gray-400 hover:bg-dark-700 hover:text-white'
+              activePage === item.id ? 'bg-primary/20 text-primary' : 'text-gray-400 hover:bg-dark-700 hover:text-white'
             }`}
           >
             <item.icon className="w-5 h-5" />
@@ -180,7 +166,6 @@ function Dashboard() {
           <FilePlus className="w-4 h-4" /> Generate Report
         </button>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <div key={index} className="glass-card p-6">
@@ -197,826 +182,191 @@ function Dashboard() {
           </div>
         ))}
       </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="glass-card p-6">
-          <h3 className="text-lg font-semibold mb-4">Recent Payments</h3>
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="flex items-center justify-between p-3 bg-dark-800 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <CreditCard className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">John Doe</p>
-                    <p className="text-sm text-gray-400">Pro Plan • ${['19', '49', '19', '35', '49'][i-1]}</p>
-                  </div>
-                </div>
-                <span className="text-green-500 text-sm">Completed</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="glass-card p-6">
-          <h3 className="text-lg font-semibold mb-4">Recent Registrations</h3>
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="flex items-center justify-between p-3 bg-dark-800 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
-                    <Users className="w-5 h-5 text-secondary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">{['Ahmed Khan', 'Sarah Ali', 'Mike Chen', 'Fatima', 'Ali Raza'][i-1]}</p>
-                    <p className="text-sm text-gray-400">{['Free', 'Pro', 'Business', 'Free', 'Pro'][i-1]} Plan</p>
-                  </div>
-                </div>
-                <span className="text-gray-400 text-sm">{['2h ago', '5h ago', '1d ago', '2d ago', '3d ago'][i-1]}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
 
-// Users Page
-function UsersPage() {
-  const users = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', plan: 'Pro', status: 'Active', joined: '2024-01-15' },
-    { id: 2, name: 'Sarah Ali', email: 'sarah@example.com', plan: 'Business', status: 'Active', joined: '2024-01-14' },
-    { id: 3, name: 'Mike Chen', email: 'mike@example.com', plan: 'Free', status: 'Inactive', joined: '2024-01-13' },
-    { id: 4, name: 'Fatima Khan', email: 'fatima@example.com', plan: 'Pro', status: 'Active', joined: '2024-01-12' },
-    { id: 5, name: 'Ali Raza', email: 'ali@example.com', plan: 'Business', status: 'Active', joined: '2024-01-11' },
-  ];
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">User Management</h1>
-        <div className="flex gap-3">
-          <input type="text" placeholder="Search users..." className="input w-64" />
-          <button className="btn-primary">Export</button>
-        </div>
-      </div>
-
-      <div className="glass-card overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-dark-800">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">User</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Plan</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Status</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Joined</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-dark-700">
-            {users.map((user) => (
-              <tr key={user.id} className="hover:bg-dark-700/50">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                      <span className="text-primary font-medium">{user.name.charAt(0)}</span>
-                    </div>
-                    <div>
-                      <p className="font-medium">{user.name}</p>
-                      <p className="text-sm text-gray-400">{user.email}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`px-3 py-1 rounded-full text-xs ${
-                    user.plan === 'Business' ? 'bg-purple-500/20 text-purple-400' :
-                    user.plan === 'Pro' ? 'bg-primary/20 text-primary' :
-                    'bg-gray-500/20 text-gray-400'
-                  }`}>
-                    {user.plan}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`px-3 py-1 rounded-full text-xs ${
-                    user.status === 'Active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                  }`}>
-                    {user.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-gray-400">{user.joined}</td>
-                <td className="px-6 py-4">
-                  <div className="flex gap-2">
-                    <button className="p-2 text-gray-400 hover:text-primary"><Edit className="w-4 h-4" /></button>
-                    <button className="p-2 text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// Payments Page
-function PaymentsPage() {
-  const payments = [
-    { id: 1, user: 'John Doe', amount: 19, method: 'EasyPaisa', plan: 'Pro', status: 'Pending', date: '2024-01-15' },
-    { id: 2, user: 'Sarah Ali', amount: 49, method: 'Bank Transfer', plan: 'Business', status: 'Verified', date: '2024-01-14' },
-    { id: 3, user: 'Mike Chen', amount: 19, method: 'EasyPaisa', plan: 'Pro', status: 'Pending', date: '2024-01-14' },
-    { id: 4, user: 'Fatima', amount: 35, method: 'Bank Transfer', plan: 'Professional', status: 'Verified', date: '2024-01-13' },
-  ];
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Payment Management</h1>
-        <div className="flex gap-3">
-          <select className="input w-40">
-            <option>All</option>
-            <option>Pending</option>
-            <option>Verified</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-card p-6">
-          <p className="text-gray-400 mb-2">Pending Payments</p>
-          <p className="text-3xl font-bold text-yellow-500">5</p>
-        </div>
-        <div className="glass-card p-6">
-          <p className="text-gray-400 mb-2">This Month Revenue</p>
-          <p className="text-3xl font-bold text-green-500">$4,520</p>
-        </div>
-        <div className="glass-card p-6">
-          <p className="text-gray-400 mb-2">Verified Today</p>
-          <p className="text-3xl font-bold text-primary">12</p>
-        </div>
-      </div>
-
-      <div className="glass-card overflow-hidden">
-        <div className="p-4 border-b border-dark-700">
-          <h3 className="font-semibold">Pending Payments</h3>
-        </div>
-        <table className="w-full">
-          <thead className="bg-dark-800">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">User</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Amount</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Method</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Plan</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Status</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-dark-700">
-            {payments.filter(p => p.status === 'Pending').map((payment) => (
-              <tr key={payment.id} className="hover:bg-dark-700/50">
-                <td className="px-6 py-4 font-medium">{payment.user}</td>
-                <td className="px-6 py-4">${payment.amount}</td>
-                <td className="px-6 py-4 text-gray-400">{payment.method}</td>
-                <td className="px-6 py-4">{payment.plan}</td>
-                <td className="px-6 py-4">
-                  <span className="px-3 py-1 rounded-full text-xs bg-yellow-500/20 text-yellow-400">
-                    {payment.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex gap-2">
-                    <button className="p-2 text-green-500 hover:bg-green-500/10 rounded-lg"><Check className="w-4 h-4" /></button>
-                    <button className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"><XCircle className="w-4 h-4" /></button>
-                    <button className="p-2 text-gray-400 hover:text-primary"><Image className="w-4 h-4" /></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="glass-card overflow-hidden">
-        <div className="p-4 border-b border-dark-700">
-          <h3 className="font-semibold">Verified Payments</h3>
-        </div>
-        <table className="w-full">
-          <thead className="bg-dark-800">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">User</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Amount</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Method</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Date</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-dark-700">
-            {payments.filter(p => p.status === 'Verified').map((payment) => (
-              <tr key={payment.id} className="hover:bg-dark-700/50">
-                <td className="px-6 py-4 font-medium">{payment.user}</td>
-                <td className="px-6 py-4">${payment.amount}</td>
-                <td className="px-6 py-4 text-gray-400">{payment.method}</td>
-                <td className="px-6 py-4 text-gray-400">{payment.date}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// Templates Page
-function TemplatesPage() {
-  const [templates, setTemplates] = useState([
-    { id: 1, name: 'Modern Resume Template', type: 'Resume', downloads: 1234 },
-    { id: 2, name: 'Professional Resume', type: 'Resume', downloads: 987 },
-    { id: 3, name: 'Risk Assessment Template', type: 'HSE', downloads: 543 },
-    { id: 4, name: 'RAMS Document', type: 'HSE', downloads: 421 },
-    { id: 5, name: 'Method Statement Template', type: 'HSE', downloads: 312 },
-  ]);
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Template Management</h1>
-        <button className="btn-primary flex items-center gap-2">
-          <Upload className="w-4 h-4" /> Upload Template
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Resume Templates</h3>
-          <div className="space-y-3">
-            {templates.filter(t => t.type === 'Resume').map((t) => (
-              <div key={t.id} className="flex items-center justify-between p-3 bg-dark-800 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-primary" />
-                  <span>{t.name}</span>
-                </div>
-                <div className="flex gap-2">
-                  <button className="p-1 text-gray-400 hover:text-primary"><Edit className="w-4 h-4" /></button>
-                  <button className="p-1 text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">HSE Templates</h3>
-          <div className="space-y-3">
-            {templates.filter(t => t.type === 'HSE').map((t) => (
-              <div key={t.id} className="flex items-center justify-between p-3 bg-dark-800 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-secondary" />
-                  <span>{t.name}</span>
-                </div>
-                <div className="flex gap-2">
-                  <button className="p-1 text-gray-400 hover:text-primary"><Edit className="w-4 h-4" /></button>
-                  <button className="p-1 text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Blog Page
+// Blog Page with API Integration
 function BlogPage() {
-  const [posts, setPosts] = useState([
-    { id: 1, title: 'How to Write ATS Resume', status: 'Published', date: '2024-01-15', views: 1234 },
-    { id: 2, title: 'HSE Documentation Best Practices', status: 'Published', date: '2024-01-10', views: 987 },
-    { id: 3, title: 'AI in Professional Writing', status: 'Draft', date: '2024-01-08', views: 0 },
-  ]);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    excerpt: '',
+    category: 'Resume Tips',
+    status: 'Draft',
+    readTime: '5 min read',
+    image: ''
+  });
+
+  const categories = ['Resume Tips', 'HSE', 'AI Technology', 'Career Tips'];
+
+  useEffect(() => { fetchBlogs(); }, []);
+
+  const fetchBlogs = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await axios.get(`${API_URL}/blogs/admin`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPosts(response.data);
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('adminToken');
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      if (editingPost) {
+        await axios.put(`${API_URL}/blogs/${editingPost._id}`, formData, config);
+      } else {
+        await axios.post(`${API_URL}/blogs`, formData, config);
+      }
+      setShowModal(false);
+      setEditingPost(null);
+      setFormData({ title: '', excerpt: '', category: 'Resume Tips', status: 'Draft', readTime: '5 min read', image: '' });
+      fetchBlogs();
+    } catch (error) {
+      console.error('Error saving blog:', error);
+    }
+  };
+
+  const handleEdit = (post) => {
+    setEditingPost(post);
+    setFormData({
+      title: post.title,
+      excerpt: post.excerpt,
+      category: post.category,
+      status: post.status,
+      readTime: post.readTime || '5 min read',
+      image: post.image || ''
+    });
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this blog?')) {
+      try {
+        const token = localStorage.getItem('adminToken');
+        await axios.delete(`${API_URL}/blogs/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        fetchBlogs();
+      } catch (error) {
+        console.error('Error deleting blog:', error);
+      }
+    }
+  };
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Blog Management</h1>
-        <button className="btn-primary flex items-center gap-2">
+        <button onClick={() => { setEditingPost(null); setFormData({ title: '', excerpt: '', category: 'Resume Tips', status: 'Draft', readTime: '5 min read', image: '' }); setShowModal(true); }} className="btn-primary flex items-center gap-2">
           <FilePlus className="w-4 h-4" /> New Post
         </button>
       </div>
-
-      <div className="glass-card overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-dark-800">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Title</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Status</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Date</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Views</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-dark-700">
-            {posts.map((post) => (
-              <tr key={post.id} className="hover:bg-dark-700/50">
-                <td className="px-6 py-4 font-medium">{post.title}</td>
-                <td className="px-6 py-4">
-                  <span className={`px-3 py-1 rounded-full text-xs ${
-                    post.status === 'Published' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
-                  }`}>
-                    {post.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-gray-400">{post.date}</td>
-                <td className="px-6 py-4 text-gray-400">{post.views}</td>
-                <td className="px-6 py-4">
-                  <div className="flex gap-2">
-                    <button className="p-2 text-gray-400 hover:text-primary"><Edit className="w-4 h-4" /></button>
-                    <button className="p-2 text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
-                  </div>
-                </td>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Total Blogs</p><p className="text-2xl font-bold">{posts.length}</p></div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Published</p><p className="text-2xl font-bold text-green-500">{posts.filter(p => p.status === 'Published').length}</p></div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Drafts</p><p className="text-2xl font-bold text-yellow-500">{posts.filter(p => p.status === 'Draft').length}</p></div>
+      </div>
+      {loading ? (
+        <div className="text-center py-8">Loading...</div>
+      ) : (
+        <div className="glass-card overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-dark-800">
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Title</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Category</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Status</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Views</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Date</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// Appearance Page with Image Upload
-function AppearancePage() {
-  const [settings, setSettings] = useState({
-    primaryColor: '#6366f1',
-    secondaryColor: '#8b5cf6',
-    heroTitle: 'AI Powered Professional Tools',
-    heroSubtitle: 'Create ATS resumes, HSE documents and websites instantly with AI.',
-  });
-
-  const [heroImages, setHeroImages] = useState([
-    { id: 1, url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop', title: 'Resume Builder' },
-    { id: 2, url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop', title: 'HSE Documentation' },
-    { id: 3, url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop', title: 'Website Builder' },
-  ]);
-  
-  const [isDragging, setIsDragging] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const files = Array.from(e.dataTransfer.files);
-    handleImageUpload(files);
-  };
-
-  const handleImageUpload = async (files) => {
-    setUploading(true);
-    
-    // Simulate upload - in production, upload to server/cloud storage
-    for (const file of files) {
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setHeroImages(prev => [...prev, {
-            id: Date.now() + Math.random(),
-            url: e.target.result,
-            title: file.name.replace(/\.[^/.]+$/, '')
-          }]);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-    
-    setTimeout(() => {
-      setUploading(false);
-    }, 1000);
-  };
-
-  const handleFileSelect = (e) => {
-    const files = Array.from(e.target.files);
-    handleImageUpload(files);
-  };
-
-  const removeImage = (id) => {
-    setHeroImages(prev => prev.filter(img => img.id !== id));
-  };
-
-  const saveSettings = () => {
-    // Save to localStorage for demo - in production, save to database
-    localStorage.setItem('siteSettings', JSON.stringify(settings));
-    localStorage.setItem('heroImages', JSON.stringify(heroImages));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Website Appearance</h1>
-        <button 
-          onClick={saveSettings}
-          className={`btn-primary flex items-center gap-2 ${saved ? 'bg-green-500' : ''}`}
-        >
-          {saved ? <Check className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
-          {saved ? 'Saved!' : 'Save Changes'}
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Color Scheme</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Primary Color</label>
-              <div className="flex gap-3">
-                <input 
-                  type="color" 
-                  value={settings.primaryColor} 
-                  onChange={(e) => setSettings({...settings, primaryColor: e.target.value})}
-                  className="w-16 h-10 rounded cursor-pointer" 
-                />
-                <input 
-                  type="text" 
-                  value={settings.primaryColor} 
-                  onChange={(e) => setSettings({...settings, primaryColor: e.target.value})}
-                  className="input flex-1" 
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Secondary Color</label>
-              <div className="flex gap-3">
-                <input 
-                  type="color" 
-                  value={settings.secondaryColor} 
-                  onChange={(e) => setSettings({...settings, secondaryColor: e.target.value})}
-                  className="w-16 h-10 rounded cursor-pointer" 
-                />
-                <input 
-                  type="text" 
-                  value={settings.secondaryColor} 
-                  onChange={(e) => setSettings({...settings, secondaryColor: e.target.value})}
-                  className="input flex-1" 
-                />
-              </div>
-            </div>
-          </div>
+            </thead>
+            <tbody className="divide-y divide-dark-700">
+              {posts.map((post) => (
+                <tr key={post._id} className="hover:bg-dark-700/50">
+                  <td className="px-6 py-4 font-medium">{post.title}</td>
+                  <td className="px-6 py-4"><span className="px-3 py-1 rounded-full text-xs bg-primary/20 text-primary">{post.category}</span></td>
+                  <td className="px-6 py-4"><span className={`px-3 py-1 rounded-full text-xs ${post.status === 'Published' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>{post.status}</span></td>
+                  <td className="px-6 py-4 text-gray-400">{post.views || 0}</td>
+                  <td className="px-6 py-4 text-gray-400">{formatDate(post.createdAt)}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex gap-2">
+                      <button onClick={() => handleEdit(post)} className="p-2 text-gray-400 hover:text-primary"><Edit className="w-4 h-4" /></button>
+                      <button onClick={() => handleDelete(post._id)} className="p-2 text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Hero Section</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Hero Title</label>
-              <input 
-                type="text" 
-                value={settings.heroTitle} 
-                onChange={(e) => setSettings({...settings, heroTitle: e.target.value})}
-                className="input" 
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Hero Subtitle</label>
-              <textarea 
-                value={settings.heroSubtitle} 
-                onChange={(e) => setSettings({...settings, heroSubtitle: e.target.value})}
-                className="input h-24" 
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Hero Images Management</h3>
-          <div 
-            className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
-              isDragging ? 'border-primary bg-primary/10' : 'border-dark-600'
-            }`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <input 
-              type="file" 
-              id="imageUpload" 
-              multiple 
-              accept="image/*" 
-              className="hidden"
-              onChange={handleFileSelect}
-            />
-            <label htmlFor="imageUpload" className="cursor-pointer">
-              {uploading ? (
-                <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
-              ) : (
-                <Image className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-              )}
-              <p className="text-gray-400 mb-2">
-                {uploading ? 'Uploading...' : 'Drag and drop images here'}
-              </p>
-              <button type="button" className="btn-primary mt-2">
-                Browse Files
-              </button>
-              <p className="text-xs text-gray-500 mt-2">Supports: JPG, PNG, GIF, WebP</p>
-            </label>
-          </div>
-          
-          {/* Image Preview Grid */}
-          <div className="mt-4">
-            <h4 className="text-sm text-gray-400 mb-3">Uploaded Images ({heroImages.length})</h4>
-            <div className="grid grid-cols-3 gap-3">
-              {heroImages.map((img) => (
-                <div key={img.id} className="relative group">
-                  <img 
-                    src={img.url} 
-                    alt={img.title}
-                    className="w-full h-20 object-cover rounded-lg"
-                  />
-                  <button
-                    onClick={() => removeImage(img.id)}
-                    className="absolute top-1 right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X className="w-4 h-4 text-white" />
-                  </button>
-                  <p className="text-xs text-gray-400 mt-1 truncate">{img.title}</p>
+      )}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="glass-card w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h2 className="text-xl font-bold mb-4">{editingPost ? 'Edit Blog Post' : 'Create New Blog Post'}</h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Title</label>
+                  <input type="text" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="input" required />
                 </div>
-              ))}
-            </div>
-          </div>
-          
-          <p className="text-xs text-gray-500 mt-3">
-            Images will rotate automatically every 5 seconds on the homepage
-          </p>
-        </div>
-
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Hero Video</h3>
-          <div className="border-2 border-dashed border-dark-600 rounded-xl p-8 text-center">
-            <Video className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-            <p className="text-gray-400 mb-2">Upload background video (optional)</p>
-            <input 
-              type="file" 
-              id="videoUpload" 
-              accept="video/*" 
-              className="hidden"
-            />
-            <label htmlFor="videoUpload" className="btn-primary mt-2 inline-block cursor-pointer">
-              Upload Video
-            </label>
-            <p className="text-xs text-gray-500 mt-2">Recommended: MP4, WebM (max 50MB)</p>
-          </div>
-          
-          {/* 3D Effects Toggle */}
-          <div className="mt-6">
-            <h4 className="text-sm text-gray-400 mb-3">3D Effects</h4>
-            <div className="space-y-3">
-              <label className="flex items-center justify-between p-3 bg-dark-800 rounded-lg cursor-pointer">
-                <span>Enable 3D Background</span>
-                <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
-              </label>
-              <label className="flex items-center justify-between p-3 bg-dark-800 rounded-lg cursor-pointer">
-                <span>Auto-rotate Objects</span>
-                <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
-              </label>
-              <label className="flex items-center justify-between p-3 bg-dark-800 rounded-lg cursor-pointer">
-                <span>Particle Effects</span>
-                <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
-              </label>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Excerpt</label>
+                  <textarea value={formData.excerpt} onChange={(e) => setFormData({...formData, excerpt: e.target.value})} className="input h-24" required />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Category</label>
+                    <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="input">
+                      {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Status</label>
+                    <select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} className="input">
+                      <option value="Draft">Draft</option>
+                      <option value="Published">Published</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex gap-3 pt-4">
+                  <button type="submit" className="btn-primary flex-1">{editingPost ? 'Update' : 'Create'} Post</button>
+                  <button type="button" onClick={() => setShowModal(false)} className="px-6 py-3 bg-dark-700 text-white rounded-xl hover:bg-dark-600">Cancel</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Preview Section */}
-      <div className="glass-card p-6">
-        <h3 className="font-semibold mb-4">Live Preview</h3>
-        <div className="bg-dark-800 rounded-xl p-4 h-48 flex items-center justify-center overflow-hidden relative">
-          <div className="absolute inset-0 bg-grid opacity-30" />
-          <div className="relative z-10 text-center">
-            <h4 className="text-xl font-bold gradient-text mb-2">{settings.heroTitle}</h4>
-            <p className="text-gray-400 text-sm">{settings.heroSubtitle}</p>
-            <div className="flex gap-2 mt-3 justify-center">
-              {heroImages.slice(0, 3).map((img, i) => (
-                <img key={i} src={img.url} alt="" className="w-12 h-12 rounded object-cover" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
 
-// Analytics Page
-function AnalyticsPage() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="glass-card p-6">
-          <p className="text-gray-400 mb-2">Total Page Views</p>
-          <p className="text-3xl font-bold">45,231</p>
-          <p className="text-green-500 text-sm mt-2">+12% from last month</p>
-        </div>
-        <div className="glass-card p-6">
-          <p className="text-gray-400 mb-2">Unique Visitors</p>
-          <p className="text-3xl font-bold">12,543</p>
-          <p className="text-green-500 text-sm mt-2">+8% from last month</p>
-        </div>
-        <div className="glass-card p-6">
-          <p className="text-gray-400 mb-2">Bounce Rate</p>
-          <p className="text-3xl font-bold">32%</p>
-          <p className="text-red-500 text-sm mt-2">+2% from last month</p>
-        </div>
-        <div className="glass-card p-6">
-          <p className="text-gray-400 mb-2">Avg. Session</p>
-          <p className="text-3xl font-bold">4m 32s</p>
-          <p className="text-green-500 text-sm mt-2">+15% from last month</p>
-        </div>
-      </div>
-
-      <div className="glass-card p-6">
-        <h3 className="font-semibold mb-4">Traffic Overview</h3>
-        <div className="h-64 flex items-end justify-between gap-2">
-          {[65, 45, 80, 55, 90, 70, 85, 60, 75, 95, 80, 70].map((h, i) => (
-            <div key={i} className="flex-1 bg-gradient-to-t from-primary to-secondary rounded-t" style={{ height: `${h}%` }} />
-          ))}
-        </div>
-        <div className="flex justify-between mt-2 text-xs text-gray-400">
-          <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
-          <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Top Pages</h3>
-          <div className="space-y-3">
-            {['/ai-tools', '/hse-documentation', '/pricing', '/services', '/blog'].map((page, i) => (
-              <div key={i} className="flex justify-between items-center p-3 bg-dark-800 rounded-lg">
-                <span>{page}</span>
-                <span className="text-primary">{[1234, 987, 765, 543, 321][i]} views</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Top Countries</h3>
-          <div className="space-y-3">
-            {['Pakistan', 'United States', 'UK', 'UAE', 'India'].map((country, i) => (
-              <div key={i} className="flex justify-between items-center p-3 bg-dark-800 rounded-lg">
-                <span>{country}</span>
-                <span className="text-primary">{[45, 25, 15, 10, 5][i]}%</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Settings Page
-function SettingsPage() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">System Settings</h1>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Payment Settings</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">EasyPaisa Number</label>
-              <input type="text" defaultValue="+92 345 4837460" className="input" />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Bank Account</label>
-              <input type="text" defaultValue="77010105779192" className="input" />
-            </div>
-          </div>
-        </div>
-
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">API Settings</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">OpenAI API Key</label>
-              <input type="password" defaultValue="sk-..." className="input" />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">JWT Secret</label>
-              <input type="password" defaultValue="your-secret-key" className="input" />
-            </div>
-          </div>
-        </div>
-
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Email Settings</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Support Email</label>
-              <input type="email" defaultValue="info@sartrends.store" className="input" />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">From Name</label>
-              <input type="text" defaultValue="SAR Trends" className="input" />
-            </div>
-          </div>
-        </div>
-
-        <div className="glass-card p-6">
-          <h3 className="font-semibold mb-4">Pricing Plans</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-dark-800 rounded-lg">
-              <span>Free Plan Generations</span>
-              <input type="number" defaultValue="5" className="input w-20 text-center" />
-            </div>
-            <div className="flex justify-between items-center p-3 bg-dark-800 rounded-lg">
-              <span>Pro Plan Price ($)</span>
-              <input type="number" defaultValue="19" className="input w-20 text-center" />
-            </div>
-            <div className="flex justify-between items-center p-3 bg-dark-800 rounded-lg">
-              <span>Business Plan Price ($)</span>
-              <input type="number" defaultValue="49" className="input w-20 text-center" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-end">
-        <button className="btn-primary">Save All Settings</button>
-      </div>
-    </div>
-  );
-}
-
-// Documents Page
-function DocumentsPage() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Document Management</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-card p-6 text-center">
-          <FileText className="w-12 h-12 text-primary mx-auto mb-4" />
-          <h3 className="font-semibold">Resume Generated</h3>
-          <p className="text-3xl font-bold mt-2">3,421</p>
-        </div>
-        <div className="glass-card p-6 text-center">
-          <FileText className="w-12 h-12 text-secondary mx-auto mb-4" />
-          <h3 className="font-semibold">HSE Documents</h3>
-          <p className="text-3xl font-bold mt-2">1,234</p>
-        </div>
-        <div className="glass-card p-6 text-center">
-          <FileText className="w-12 h-12 text-accent mx-auto mb-4" />
-          <h3 className="font-semibold">Websites Built</h3>
-          <p className="text-3xl font-bold mt-2">567</p>
-        </div>
-      </div>
-
-      <div className="glass-card overflow-hidden">
-        <div className="p-4 border-b border-dark-700">
-          <h3 className="font-semibold">Recent Documents</h3>
-        </div>
-        <table className="w-full">
-          <thead className="bg-dark-800">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Document</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Type</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">User</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Date</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-dark-700">
-            {[
-              { name: 'Professional Resume - John Doe', type: 'Resume', user: 'john@example.com', date: '2024-01-15' },
-              { name: 'Risk Assessment - Construction', type: 'HSE', user: 'ahmed@example.com', date: '2024-01-15' },
-              { name: 'Business Website - TechCorp', type: 'Website', user: 'sarah@example.com', date: '2024-01-14' },
-              { name: 'RAMS Document', type: 'HSE', user: 'mike@example.com', date: '2024-01-14' },
-            ].map((doc, i) => (
-              <tr key={i} className="hover:bg-dark-700/50">
-                <td className="px-6 py-4 font-medium">{doc.name}</td>
-                <td className="px-6 py-4">{doc.type}</td>
-                <td className="px-6 py-4 text-gray-400">{doc.user}</td>
-                <td className="px-6 py-4 text-gray-400">{doc.date}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
+// Simple Pages Placeholders
+function UsersPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">User Management</h1><p className="text-gray-400">User management features coming soon...</p></div>; }
+function PaymentsPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Payment Management</h1><p className="text-gray-400">Payment management features coming soon...</p></div>; }
+function DocumentsPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Document Management</h1><p className="text-gray-400">Document management features coming soon...</p></div>; }
+function TemplatesPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Template Management</h1><p className="text-gray-400">Template management features coming soon...</p></div>; }
+function AppearancePage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Website Appearance</h1><p className="text-gray-400">Appearance settings coming soon...</p></div>; }
+function AnalyticsPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Analytics</h1><p className="text-gray-400">Analytics features coming soon...</p></div>; }
+function SettingsPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">System Settings</h1><p className="text-gray-400">Settings coming soon...</p></div>; }
 
 // Main App Component
 function App() {
@@ -1026,7 +376,6 @@ function App() {
   const [adminUser, setAdminUser] = useState(null);
 
   useEffect(() => {
-    // Check for existing admin session
     const token = localStorage.getItem('adminToken');
     const user = localStorage.getItem('adminUser');
     if (token && user) {
@@ -1035,17 +384,8 @@ function App() {
     }
   }, []);
 
-  const handleLogin = (user) => {
-    setAdminUser(user);
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminUser');
-    setAdminUser(null);
-    setIsLoggedIn(false);
-  };
+  const handleLogin = (user) => { setAdminUser(user); setIsLoggedIn(true); };
+  const handleLogout = () => { localStorage.removeItem('adminToken'); localStorage.removeItem('adminUser'); setAdminUser(null); setIsLoggedIn(false); };
 
   const renderPage = () => {
     switch (activePage) {
@@ -1062,20 +402,15 @@ function App() {
     }
   };
 
-  if (!isLoggedIn) {
-    return <LoginPage onLogin={handleLogin} />;
-  }
+  if (!isLoggedIn) return <LoginPage onLogin={handleLogin} />;
 
   return (
     <div className="min-h-screen bg-dark-900">
       <Sidebar activePage={activePage} setActivePage={setActivePage} isOpen={sidebarOpen} setIsOpen={setSidebarOpen} onLogout={handleLogout} />
-      
       <main className="lg:ml-64 min-h-screen">
         <header className="sticky top-0 z-30 bg-dark-900/80 backdrop-blur-lg border-b border-dark-700 px-6 py-4">
           <div className="flex items-center justify-between">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 text-white">
-              <Menu className="w-6 h-6" />
-            </button>
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 text-white"><Menu className="w-6 h-6" /></button>
             <div className="ml-auto flex items-center gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
@@ -1086,10 +421,7 @@ function App() {
             </div>
           </div>
         </header>
-        
-        <div className="p-6">
-          {renderPage()}
-        </div>
+        <div className="p-6">{renderPage()}</div>
       </main>
     </div>
   );

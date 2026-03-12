@@ -18,12 +18,14 @@ const userRoutes = require('./routes/users');
 const documentRoutes = require('./routes/documents');
 const paymentRoutes = require('./routes/payments');
 const aiRoutes = require('./routes/ai');
+const blogRoutes = require('./routes/blogs');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/blogs', blogRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

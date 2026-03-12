@@ -16,31 +16,22 @@ async function createAdmin() {
     await mongoose.connect(MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    // Check if admin already exists
-    const existingAdmin = await User.findOne({ email: 'admin@sartrends.store' });
+    // Delete existing admin and create fresh
+    await User.deleteOne({ email: 'admin@sartrends.store' });
     
-    if (existingAdmin) {
-      console.log('Admin user already exists');
-      // Update to ensure isAdmin is true
-      existingAdmin.isAdmin = true;
-      await existingAdmin.save();
-      console.log('Admin user updated successfully');
-    } else {
-      // Create admin user
-      const hashedPassword = await bcrypt.hash('Admin@123', 10);
-      const adminUser = new User({
-        name: 'Admin',
-        email: 'admin@sartrends.store',
-        password: hashedPassword,
-        plan: 'business',
-        isAdmin: true,
-        generationsLeft: 999999,
-        paymentVerified: true
-      });
+    // Create admin user - don't hash here, let the model pre-save hook handle it
+    const adminUser = new User({
+      name: 'Admin',
+      email: 'admin@sartrends.store',
+      password: 'Admin@123',
+      plan: 'business',
+      isAdmin: true,
+      generationsLeft: 999999,
+      paymentVerified: true
+    });
 
-      await adminUser.save();
-      console.log('Admin user created successfully!');
-    }
+    await adminUser.save();
+    console.log('Admin user created successfully!');
 
     console.log('\nAdmin Credentials:');
     console.log('Email: admin@sartrends.store');
