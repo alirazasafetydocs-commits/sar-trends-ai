@@ -806,10 +806,267 @@ function DocumentsPage() {
     </div>
   );
 }
-function TemplatesPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Template Management</h1><p className="text-gray-400">Template management features coming soon...</p></div>; }
-function AppearancePage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Website Appearance</h1><p className="text-gray-400">Appearance settings coming soon...</p></div>; }
-function AnalyticsPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Analytics</h1><p className="text-gray-400">Analytics features coming soon...</p></div>; }
-function SettingsPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">System Settings</h1><p className="text-gray-400">Settings coming soon...</p></div>; }
+
+function TemplatesPage() {
+  const templates = [
+    { id: 1, name: 'Modern Resume Template', type: 'Resume', downloads: 1234, category: 'Professional' },
+    { id: 2, name: 'Creative Resume Template', type: 'Resume', downloads: 987, category: 'Creative' },
+    { id: 3, name: 'ATS Optimized Resume', type: 'Resume', downloads: 756, category: 'Technical' },
+    { id: 4, name: 'Risk Assessment Template', type: 'HSE', downloads: 543, category: 'Safety' },
+    { id: 5, name: 'RAMS Document Template', type: 'HSE', downloads: 421, category: 'Safety' },
+    { id: 6, name: 'Method Statement Template', type: 'HSE', downloads: 312, category: 'Safety' },
+    { id: 7, name: 'Cover Letter Basic', type: 'Cover Letter', downloads: 234, category: 'Professional' },
+    { id: 8, name: 'Cover Letter Creative', type: 'Cover Letter', downloads: 189, category: 'Creative' },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Template Management</h1>
+        <button className="btn-primary flex items-center gap-2">
+          <Upload className="w-4 h-4" /> Upload Template
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="glass-card p-6">
+          <h3 className="font-semibold mb-4">Resume Templates ({templates.filter(t => t.type === 'Resume').length})</h3>
+          <div className="space-y-3">
+            {templates.filter(t => t.type === 'Resume').map((t) => (
+              <div key={t.id} className="flex items-center justify-between p-3 bg-dark-800 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <FileText className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="font-medium">{t.name}</p>
+                    <p className="text-xs text-gray-500">{t.category} • {t.downloads} downloads</p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button className="p-1 text-gray-400 hover:text-primary"><Edit className="w-4 h-4" /></button>
+                  <button className="p-1 text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="glass-card p-6">
+          <h3 className="font-semibold mb-4">HSE Templates ({templates.filter(t => t.type === 'HSE').length})</h3>
+          <div className="space-y-3">
+            {templates.filter(t => t.type === 'HSE').map((t) => (
+              <div key={t.id} className="flex items-center justify-between p-3 bg-dark-800 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <FileText className="w-5 h-5 text-secondary" />
+                  <div>
+                    <p className="font-medium">{t.name}</p>
+                    <p className="text-xs text-gray-500">{t.category} • {t.downloads} downloads</p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button className="p-1 text-gray-400 hover:text-primary"><Edit className="w-4 h-4" /></button>
+                  <button className="p-1 text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AppearancePage() {
+  const [settings, setSettings] = useState({
+    primaryColor: '#6366f1',
+    secondaryColor: '#8b5cf6',
+    heroTitle: 'AI Powered Professional Tools',
+    heroSubtitle: 'Create ATS resumes, HSE documents and websites instantly with AI.',
+  });
+
+  const [heroImages, setHeroImages] = useState([
+    { id: 1, url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop', title: 'Resume Builder' },
+    { id: 2, url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop', title: 'HSE Documentation' },
+  ]);
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
+  const handleDragLeave = () => { setIsDragging(false); };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const saveSettings = () => {
+    localStorage.setItem('siteSettings', JSON.stringify(settings));
+    localStorage.setItem('heroImages', JSON.stringify(heroImages));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Website Appearance</h1>
+        <button onClick={saveSettings} className={`btn-primary flex items-center gap-2 ${saved ? 'bg-green-500' : ''}`}>
+          {saved ? <Check className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
+          {saved ? 'Saved!' : 'Save Changes'}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="glass-card p-6">
+          <h3 className="font-semibold mb-4">Color Scheme</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Primary Color</label>
+              <div className="flex gap-3">
+                <input type="color" value={settings.primaryColor} onChange={(e) => setSettings({...settings, primaryColor: e.target.value})} className="w-16 h-10 rounded cursor-pointer" />
+                <input type="text" value={settings.primaryColor} onChange={(e) => setSettings({...settings, primaryColor: e.target.value})} className="input flex-1" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Secondary Color</label>
+              <div className="flex gap-3">
+                <input type="color" value={settings.secondaryColor} onChange={(e) => setSettings({...settings, secondaryColor: e.target.value})} className="w-16 h-10 rounded cursor-pointer" />
+                <input type="text" value={settings.secondaryColor} onChange={(e) => setSettings({...settings, secondaryColor: e.target.value})} className="input flex-1" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="glass-card p-6">
+          <h3 className="font-semibold mb-4">Hero Section</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Hero Title</label>
+              <input type="text" value={settings.heroTitle} onChange={(e) => setSettings({...settings, heroTitle: e.target.value})} className="input" />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Hero Subtitle</label>
+              <textarea value={settings.heroSubtitle} onChange={(e) => setSettings({...settings, heroSubtitle: e.target.value})} className="input h-24" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AnalyticsPage() {
+  const stats = [
+    { label: 'Total Page Views', value: '45,231', change: '+12%', color: 'text-green-500' },
+    { label: 'Unique Visitors', value: '12,543', change: '+8%', color: 'text-green-500' },
+    { label: 'Bounce Rate', value: '32%', change: '+2%', color: 'text-red-500' },
+    { label: 'Avg. Session', value: '4m 32s', change: '+15%', color: 'text-green-500' },
+  ];
+
+  const topPages = [
+    { page: '/ai-tools', views: 1234 },
+    { page: '/hse-documentation', views: 987 },
+    { page: '/pricing', views: 765 },
+    { page: '/services', views: 543 },
+    { page: '/blog', views: 321 },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, index) => (
+          <div key={index} className="glass-card p-6">
+            <p className="text-gray-400 mb-2">{stat.label}</p>
+            <p className="text-3xl font-bold">{stat.value}</p>
+            <p className={`text-sm mt-2 ${stat.color}`}>{stat.change} from last month</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="glass-card p-6">
+          <h3 className="font-semibold mb-4">Top Pages</h3>
+          <div className="space-y-3">
+            {topPages.map((page, i) => (
+              <div key={i} className="flex justify-between items-center p-3 bg-dark-800 rounded-lg">
+                <span>{page.page}</span>
+                <span className="text-primary">{page.views} views</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="glass-card p-6">
+          <h3 className="font-semibold mb-4">Traffic Overview</h3>
+          <div className="h-32 flex items-end justify-between gap-1">
+            {[65, 45, 80, 55, 90, 70, 85, 60, 75, 95, 80, 70].map((h, i) => (
+              <div key={i} className="flex-1 bg-gradient-to-t from-primary to-secondary rounded-t" style={{ height: `${h}%` }} />
+            ))}
+          </div>
+          <div className="flex justify-between mt-2 text-xs text-gray-400">
+            <span>Jan</span><span>Dec</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SettingsPage() {
+  const [settings, setSettings] = useState({
+    easypaisa: '+92 345 4837460',
+    bankAccount: '77010105779192',
+    supportEmail: 'info@sartrends.store',
+    freeGenerations: '5',
+    proPrice: '19',
+    businessPrice: '49',
+  });
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">System Settings</h1>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="glass-card p-6">
+          <h3 className="font-semibold mb-4">Payment Settings</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">EasyPaisa Number</label>
+              <input type="text" value={settings.easypaisa} onChange={(e) => setSettings({...settings, easypaisa: e.target.value})} className="input" />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Bank Account</label>
+              <input type="text" value={settings.bankAccount} onChange={(e) => setSettings({...settings, bankAccount: e.target.value})} className="input" />
+            </div>
+          </div>
+        </div>
+
+        <div className="glass-card p-6">
+          <h3 className="font-semibold mb-4">Pricing Plans</h3>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center p-3 bg-dark-800 rounded-lg">
+              <span>Free Plan Generations</span>
+              <input type="number" value={settings.freeGenerations} onChange={(e) => setSettings({...settings, freeGenerations: e.target.value})} className="input w-20 text-center" />
+            </div>
+            <div className="flex justify-between items-center p-3 bg-dark-800 rounded-lg">
+              <span>Pro Plan Price ($)</span>
+              <input type="number" value={settings.proPrice} onChange={(e) => setSettings({...settings, proPrice: e.target.value})} className="input w-20 text-center" />
+            </div>
+            <div className="flex justify-between items-center p-3 bg-dark-800 rounded-lg">
+              <span>Business Plan Price ($)</span>
+              <input type="number" value={settings.businessPrice} onChange={(e) => setSettings({...settings, businessPrice: e.target.value})} className="input w-20 text-center" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <button className="btn-primary">Save All Settings</button>
+      </div>
+    </div>
+  );
+}
 
 // Main App Component
 function App() {
