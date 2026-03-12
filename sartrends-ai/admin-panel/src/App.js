@@ -360,9 +360,452 @@ function BlogPage() {
 }
 
 // Simple Pages Placeholders
-function UsersPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">User Management</h1><p className="text-gray-400">User management features coming soon...</p></div>; }
-function PaymentsPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Payment Management</h1><p className="text-gray-400">Payment management features coming soon...</p></div>; }
-function DocumentsPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Document Management</h1><p className="text-gray-400">Document management features coming soon...</p></div>; }
+
+function UsersPage() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await axios.get(`${API_URL}/users/all`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (userId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.put(`${API_URL}/users/toggle-status/${userId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchUsers();
+    } catch (error) {
+      console.error('Error toggling user status:', error);
+    }
+  };
+
+  const handleUpdatePlan = async (userId, plan) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.put(`${API_URL}/users/update-plan/${userId}`, 
+        { plan },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchUsers();
+    } catch (error) {
+      console.error('Error updating plan:', error);
+    }
+  };
+
+  const filteredUsers = users.filter(user => 
+    user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">User Management</h1>
+        <div className="flex gap-3">
+          <input 
+            type="text" 
+            placeholder="Search users..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="input w-64" 
+          />
+          <button onClick={fetchUsers} className="btn-primary">Refresh</button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">Total Users</p>
+          <p className="text-2xl font-bold">{users.length}</p>
+        </div>
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">Active</p>
+          <p className="text-2xl font-bold text-green-500">
+            {users.filter(u => u.isActive).length}
+          </p>
+        </div>
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">Business Plan</p>
+          <p className="text-2xl font-bold text-purple-500">
+            {users.filter(u => u.plan === 'business').length}
+          </p>
+        </div>
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">Pro Plan</p>
+          <p className="text-2xl font-bold text-primary">
+            {users.filter(u => u.plan === 'pro').length}
+          </p>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-8">Loading...</div>
+      ) : (
+        <div className="glass-card overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-dark-800">
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">User</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Plan</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Generations</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Status</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Joined</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-dark-700">
+              {filteredUsers.map((user) => (
+                <tr key={user._id} className="hover:bg-dark-700/50">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                        <span className="text-primary font-medium">
+                          {user.name?.charAt(0) || 'U'}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-medium">{user.name}</p>
+                        <p className="text-sm text-gray-400">{user.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <select
+                      value={user.plan}
+                      onChange={(e) => handleUpdatePlan(user._id, e.target.value)}
+                      className="input w-32 text-sm"
+                    >
+                      <option value="free">Free</option>
+                      <option value="pro">Pro</option>
+                      <option value="business">Business</option>
+                    </select>
+                  </td>
+                  <td className="px-6 py-4 text-gray-300">
+                    {user.generationsLeft === -1 ? '∞' : user.generationsLeft}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs ${
+                      user.isActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                    }`}>
+                      {user.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-400">
+                    {formatDate(user.createdAt)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => handleToggleStatus(user._id)}
+                        className={`p-2 rounded-lg ${
+                          user.isActive 
+                            ? 'text-red-400 hover:bg-red-500/10' 
+                            : 'text-green-400 hover:bg-green-500/10'
+                        }`}
+                      >
+                        {user.isActive ? <XCircle className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PaymentsPage() {
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    fetchPayments();
+  }, []);
+
+  const fetchPayments = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await axios.get(`${API_URL}/payments/all`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPayments(response.data);
+    } catch (error) {
+      console.error('Error fetching payments:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerify = async (paymentId, status) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.put(`${API_URL}/payments/verify/${paymentId}`, 
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchPayments();
+    } catch (error) {
+      console.error('Error verifying payment:', error);
+    }
+  };
+
+  const filteredPayments = filter === 'all' 
+    ? payments 
+    : payments.filter(p => p.status === filter);
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Payment Management</h1>
+        <div className="flex gap-3">
+          <select 
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="input w-40"
+          >
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <button onClick={fetchPayments} className="btn-primary">Refresh</button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">Total Payments</p>
+          <p className="text-2xl font-bold">{payments.length}</p>
+        </div>
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">Pending</p>
+          <p className="text-2xl font-bold text-yellow-500">
+            {payments.filter(p => p.status === 'pending').length}
+          </p>
+        </div>
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">Approved</p>
+          <p className="text-2xl font-bold text-green-500">
+            {payments.filter(p => p.status === 'approved').length}
+          </p>
+        </div>
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">Total Revenue</p>
+          <p className="text-2xl font-bold text-primary">
+            ${payments.filter(p => p.status === 'approved').reduce((sum, p) => sum + (p.amount || 0), 0)}
+          </p>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-8">Loading...</div>
+      ) : (
+        <div className="glass-card overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-dark-800">
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">User</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Amount</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Method</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Plan</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Status</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Date</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-dark-700">
+              {filteredPayments.map((payment) => (
+                <tr key={payment._id} className="hover:bg-dark-700/50">
+                  <td className="px-6 py-4">
+                    <div>
+                      <p className="font-medium">{payment.user?.name || 'Unknown'}</p>
+                      <p className="text-sm text-gray-400">{payment.user?.email || 'N/A'}</p>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 font-bold">${payment.amount}</td>
+                  <td className="px-6 py-4 text-gray-300">{payment.method}</td>
+                  <td className="px-6 py-4">
+                    <span className="px-3 py-1 rounded-full text-xs bg-primary/20 text-primary">
+                      {payment.plan}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs ${
+                      payment.status === 'approved' ? 'bg-green-500/20 text-green-400' :
+                      payment.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+                      'bg-red-500/20 text-red-400'
+                    }`}>
+                      {payment.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-400">
+                    {formatDate(payment.createdAt)}
+                  </td>
+                  <td className="px-6 py-4">
+                    {payment.status === 'pending' && (
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => handleVerify(payment._id, 'approved')}
+                          className="p-2 text-green-400 hover:bg-green-500/10 rounded-lg"
+                        >
+                          <Check className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleVerify(payment._id, 'rejected')}
+                          className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg"
+                        >
+                          <XCircle className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DocumentsPage() {
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
+
+  const fetchDocuments = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await axios.get(`${API_URL}/documents/all`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setDocuments(response.data);
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Document Management</h1>
+        <button onClick={fetchDocuments} className="btn-primary">Refresh</button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">Total Documents</p>
+          <p className="text-2xl font-bold">{documents.length}</p>
+        </div>
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">This Month</p>
+          <p className="text-2xl font-bold text-primary">
+            {documents.filter(d => new Date(d.createdAt) > new Date(Date.now() - 30*24*60*60*1000)).length}
+          </p>
+        </div>
+        <div className="glass-card p-4">
+          <p className="text-gray-400 text-sm">Document Types</p>
+          <p className="text-2xl font-bold text-secondary">
+            {new Set(documents.map(d => d.type)).size}
+          </p>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-8">Loading...</div>
+      ) : (
+        <div className="glass-card overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-dark-800">
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Title</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Type</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">User</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Status</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Date</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-dark-700">
+              {documents.slice(0, 50).map((doc) => (
+                <tr key={doc._id} className="hover:bg-dark-700/50">
+                  <td className="px-6 py-4 font-medium">{doc.title || 'Untitled'}</td>
+                  <td className="px-6 py-4">
+                    <span className="px-3 py-1 rounded-full text-xs bg-primary/20 text-primary">
+                      {doc.type || 'Document'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-400">{doc.user?.name || 'Unknown'}</td>
+                  <td className="px-6 py-4">
+                    <span className="px-3 py-1 rounded-full text-xs bg-green-500/20 text-green-400">
+                      Completed
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-400">
+                    {formatDate(doc.createdAt)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
 function TemplatesPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Template Management</h1><p className="text-gray-400">Template management features coming soon...</p></div>; }
 function AppearancePage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Website Appearance</h1><p className="text-gray-400">Appearance settings coming soon...</p></div>; }
 function AnalyticsPage() { return <div className="space-y-6"><h1 className="text-2xl font-bold">Analytics</h1><p className="text-gray-400">Analytics features coming soon...</p></div>; }
