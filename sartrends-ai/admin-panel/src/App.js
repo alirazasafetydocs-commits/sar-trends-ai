@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, CreditCard, FileText, Settings, 
   BarChart3, Package, MessageSquare, Palette, Image, Video,
   Menu, LogOut, Check, XCircle, Edit, Trash2, Upload,
-  TrendingUp, DollarSign, UserCheck, FilePlus, Eye, EyeOff, Lock
+  TrendingUp, DollarSign, UserCheck, FilePlus, Eye, EyeOff, Lock, X
 } from 'lucide-react';
 
 const API_URL = 'http://localhost:5000/api';
@@ -186,7 +186,7 @@ function Dashboard() {
   );
 }
 
-// Blog Page with API Integration
+// Blog Page
 function BlogPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -359,16 +359,12 @@ function BlogPage() {
   );
 }
 
-// Simple Pages Placeholders
-
 function UsersPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  useEffect(() => { fetchUsers(); }, []);
 
   const fetchUsers = async () => {
     try {
@@ -415,11 +411,7 @@ function UsersPage() {
   );
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
   return (
@@ -427,43 +419,16 @@ function UsersPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">User Management</h1>
         <div className="flex gap-3">
-          <input 
-            type="text" 
-            placeholder="Search users..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="input w-64" 
-          />
+          <input type="text" placeholder="Search users..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="input w-64" />
           <button onClick={fetchUsers} className="btn-primary">Refresh</button>
         </div>
       </div>
-
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">Total Users</p>
-          <p className="text-2xl font-bold">{users.length}</p>
-        </div>
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">Active</p>
-          <p className="text-2xl font-bold text-green-500">
-            {users.filter(u => u.isActive).length}
-          </p>
-        </div>
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">Business Plan</p>
-          <p className="text-2xl font-bold text-purple-500">
-            {users.filter(u => u.plan === 'business').length}
-          </p>
-        </div>
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">Pro Plan</p>
-          <p className="text-2xl font-bold text-primary">
-            {users.filter(u => u.plan === 'pro').length}
-          </p>
-        </div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Total Users</p><p className="text-2xl font-bold">{users.length}</p></div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Active</p><p className="text-2xl font-bold text-green-500">{users.filter(u => u.isActive).length}</p></div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Business Plan</p><p className="text-2xl font-bold text-purple-500">{users.filter(u => u.plan === 'business').length}</p></div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Pro Plan</p><p className="text-2xl font-bold text-primary">{users.filter(u => u.plan === 'pro').length}</p></div>
       </div>
-
       {loading ? (
         <div className="text-center py-8">Loading...</div>
       ) : (
@@ -485,9 +450,7 @@ function UsersPage() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                        <span className="text-primary font-medium">
-                          {user.name?.charAt(0) || 'U'}
-                        </span>
+                        <span className="text-primary font-medium">{user.name?.charAt(0) || 'U'}</span>
                       </div>
                       <div>
                         <p className="font-medium">{user.name}</p>
@@ -496,39 +459,22 @@ function UsersPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <select
-                      value={user.plan}
-                      onChange={(e) => handleUpdatePlan(user._id, e.target.value)}
-                      className="input w-32 text-sm"
-                    >
+                    <select value={user.plan} onChange={(e) => handleUpdatePlan(user._id, e.target.value)} className="input w-32 text-sm">
                       <option value="free">Free</option>
                       <option value="pro">Pro</option>
                       <option value="business">Business</option>
                     </select>
                   </td>
-                  <td className="px-6 py-4 text-gray-300">
-                    {user.generationsLeft === -1 ? '∞' : user.generationsLeft}
-                  </td>
+                  <td className="px-6 py-4 text-gray-300">{user.generationsLeft === -1 ? '∞' : user.generationsLeft}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs ${
-                      user.isActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                    }`}>
+                    <span className={`px-3 py-1 rounded-full text-xs ${user.isActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                       {user.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-400">
-                    {formatDate(user.createdAt)}
-                  </td>
+                  <td className="px-6 py-4 text-gray-400">{formatDate(user.createdAt)}</td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
-                      <button 
-                        onClick={() => handleToggleStatus(user._id)}
-                        className={`p-2 rounded-lg ${
-                          user.isActive 
-                            ? 'text-red-400 hover:bg-red-500/10' 
-                            : 'text-green-400 hover:bg-green-500/10'
-                        }`}
-                      >
+                      <button onClick={() => handleToggleStatus(user._id)} className={`p-2 rounded-lg ${user.isActive ? 'text-red-400 hover:bg-red-500/10' : 'text-green-400 hover:bg-green-500/10'}`}>
                         {user.isActive ? <XCircle className="w-4 h-4" /> : <Check className="w-4 h-4" />}
                       </button>
                     </div>
@@ -548,9 +494,7 @@ function PaymentsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
-  useEffect(() => {
-    fetchPayments();
-  }, []);
+  useEffect(() => { fetchPayments(); }, []);
 
   const fetchPayments = async () => {
     try {
@@ -569,26 +513,19 @@ function PaymentsPage() {
   const handleVerify = async (paymentId, status) => {
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.put(`${API_URL}/payments/verify/${paymentId}`, 
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.put(`${API_URL}/payments/verify/${paymentId}`, { status }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       fetchPayments();
     } catch (error) {
       console.error('Error verifying payment:', error);
     }
   };
 
-  const filteredPayments = filter === 'all' 
-    ? payments 
-    : payments.filter(p => p.status === filter);
+  const filteredPayments = filter === 'all' ? payments : payments.filter(p => p.status === filter);
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
   return (
@@ -596,11 +533,7 @@ function PaymentsPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Payment Management</h1>
         <div className="flex gap-3">
-          <select 
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="input w-40"
-          >
+          <select value={filter} onChange={(e) => setFilter(e.target.value)} className="input w-40">
             <option value="all">All</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
@@ -609,33 +542,12 @@ function PaymentsPage() {
           <button onClick={fetchPayments} className="btn-primary">Refresh</button>
         </div>
       </div>
-
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">Total Payments</p>
-          <p className="text-2xl font-bold">{payments.length}</p>
-        </div>
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">Pending</p>
-          <p className="text-2xl font-bold text-yellow-500">
-            {payments.filter(p => p.status === 'pending').length}
-          </p>
-        </div>
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">Approved</p>
-          <p className="text-2xl font-bold text-green-500">
-            {payments.filter(p => p.status === 'approved').length}
-          </p>
-        </div>
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">Total Revenue</p>
-          <p className="text-2xl font-bold text-primary">
-            ${payments.filter(p => p.status === 'approved').reduce((sum, p) => sum + (p.amount || 0), 0)}
-          </p>
-        </div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Total Payments</p><p className="text-2xl font-bold">{payments.length}</p></div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Pending</p><p className="text-2xl font-bold text-yellow-500">{payments.filter(p => p.status === 'pending').length}</p></div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Approved</p><p className="text-2xl font-bold text-green-500">{payments.filter(p => p.status === 'approved').length}</p></div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Total Revenue</p><p className="text-2xl font-bold text-primary">${payments.filter(p => p.status === 'approved').reduce((sum, p) => sum + (p.amount || 0), 0)}</p></div>
       </div>
-
       {loading ? (
         <div className="text-center py-8">Loading...</div>
       ) : (
@@ -656,45 +568,22 @@ function PaymentsPage() {
               {filteredPayments.map((payment) => (
                 <tr key={payment._id} className="hover:bg-dark-700/50">
                   <td className="px-6 py-4">
-                    <div>
-                      <p className="font-medium">{payment.user?.name || 'Unknown'}</p>
-                      <p className="text-sm text-gray-400">{payment.user?.email || 'N/A'}</p>
-                    </div>
+                    <div><p className="font-medium">{payment.user?.name || 'Unknown'}</p><p className="text-sm text-gray-400">{payment.user?.email || 'N/A'}</p></div>
                   </td>
                   <td className="px-6 py-4 font-bold">${payment.amount}</td>
                   <td className="px-6 py-4 text-gray-300">{payment.method}</td>
+                  <td className="px-6 py-4"><span className="px-3 py-1 rounded-full text-xs bg-primary/20 text-primary">{payment.plan}</span></td>
                   <td className="px-6 py-4">
-                    <span className="px-3 py-1 rounded-full text-xs bg-primary/20 text-primary">
-                      {payment.plan}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs ${
-                      payment.status === 'approved' ? 'bg-green-500/20 text-green-400' :
-                      payment.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                      'bg-red-500/20 text-red-400'
-                    }`}>
+                    <span className={`px-3 py-1 rounded-full text-xs ${payment.status === 'approved' ? 'bg-green-500/20 text-green-400' : payment.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400'}`}>
                       {payment.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-400">
-                    {formatDate(payment.createdAt)}
-                  </td>
+                  <td className="px-6 py-4 text-gray-400">{formatDate(payment.createdAt)}</td>
                   <td className="px-6 py-4">
                     {payment.status === 'pending' && (
                       <div className="flex gap-2">
-                        <button 
-                          onClick={() => handleVerify(payment._id, 'approved')}
-                          className="p-2 text-green-400 hover:bg-green-500/10 rounded-lg"
-                        >
-                          <Check className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleVerify(payment._id, 'rejected')}
-                          className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg"
-                        >
-                          <XCircle className="w-4 h-4" />
-                        </button>
+                        <button onClick={() => handleVerify(payment._id, 'approved')} className="p-2 text-green-400 hover:bg-green-500/10 rounded-lg"><Check className="w-4 h-4" /></button>
+                        <button onClick={() => handleVerify(payment._id, 'rejected')} className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg"><XCircle className="w-4 h-4" /></button>
                       </div>
                     )}
                   </td>
@@ -712,9 +601,7 @@ function DocumentsPage() {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchDocuments();
-  }, []);
+  useEffect(() => { fetchDocuments(); }, []);
 
   const fetchDocuments = async () => {
     try {
@@ -731,11 +618,7 @@ function DocumentsPage() {
   };
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
   return (
@@ -744,27 +627,11 @@ function DocumentsPage() {
         <h1 className="text-2xl font-bold">Document Management</h1>
         <button onClick={fetchDocuments} className="btn-primary">Refresh</button>
       </div>
-
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">Total Documents</p>
-          <p className="text-2xl font-bold">{documents.length}</p>
-        </div>
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">This Month</p>
-          <p className="text-2xl font-bold text-primary">
-            {documents.filter(d => new Date(d.createdAt) > new Date(Date.now() - 30*24*60*60*1000)).length}
-          </p>
-        </div>
-        <div className="glass-card p-4">
-          <p className="text-gray-400 text-sm">Document Types</p>
-          <p className="text-2xl font-bold text-secondary">
-            {new Set(documents.map(d => d.type)).size}
-          </p>
-        </div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Total Documents</p><p className="text-2xl font-bold">{documents.length}</p></div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">This Month</p><p className="text-2xl font-bold text-primary">{documents.filter(d => new Date(d.createdAt) > new Date(Date.now() - 30*24*60*60*1000)).length}</p></div>
+        <div className="glass-card p-4"><p className="text-gray-400 text-sm">Document Types</p><p className="text-2xl font-bold text-secondary">{new Set(documents.map(d => d.type)).size}</p></div>
       </div>
-
       {loading ? (
         <div className="text-center py-8">Loading...</div>
       ) : (
@@ -783,20 +650,10 @@ function DocumentsPage() {
               {documents.slice(0, 50).map((doc) => (
                 <tr key={doc._id} className="hover:bg-dark-700/50">
                   <td className="px-6 py-4 font-medium">{doc.title || 'Untitled'}</td>
-                  <td className="px-6 py-4">
-                    <span className="px-3 py-1 rounded-full text-xs bg-primary/20 text-primary">
-                      {doc.type || 'Document'}
-                    </span>
-                  </td>
+                  <td className="px-6 py-4"><span className="px-3 py-1 rounded-full text-xs bg-primary/20 text-primary">{doc.type || 'Document'}</span></td>
                   <td className="px-6 py-4 text-gray-400">{doc.user?.name || 'Unknown'}</td>
-                  <td className="px-6 py-4">
-                    <span className="px-3 py-1 rounded-full text-xs bg-green-500/20 text-green-400">
-                      Completed
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-gray-400">
-                    {formatDate(doc.createdAt)}
-                  </td>
+                  <td className="px-6 py-4"><span className="px-3 py-1 rounded-full text-xs bg-green-500/20 text-green-400">Completed</span></td>
+                  <td className="px-6 py-4 text-gray-400">{formatDate(doc.createdAt)}</td>
                 </tr>
               ))}
             </tbody>
@@ -823,11 +680,8 @@ function TemplatesPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Template Management</h1>
-        <button className="btn-primary flex items-center gap-2">
-          <Upload className="w-4 h-4" /> Upload Template
-        </button>
+        <button className="btn-primary flex items-center gap-2"><Upload className="w-4 h-4" /> Upload Template</button>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="glass-card p-6">
           <h3 className="font-semibold mb-4">Resume Templates ({templates.filter(t => t.type === 'Resume').length})</h3>
@@ -836,10 +690,7 @@ function TemplatesPage() {
               <div key={t.id} className="flex items-center justify-between p-3 bg-dark-800 rounded-lg">
                 <div className="flex items-center gap-3">
                   <FileText className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="font-medium">{t.name}</p>
-                    <p className="text-xs text-gray-500">{t.category} • {t.downloads} downloads</p>
-                  </div>
+                  <div><p className="font-medium">{t.name}</p><p className="text-xs text-gray-500">{t.category} • {t.downloads} downloads</p></div>
                 </div>
                 <div className="flex gap-2">
                   <button className="p-1 text-gray-400 hover:text-primary"><Edit className="w-4 h-4" /></button>
@@ -849,7 +700,6 @@ function TemplatesPage() {
             ))}
           </div>
         </div>
-
         <div className="glass-card p-6">
           <h3 className="font-semibold mb-4">HSE Templates ({templates.filter(t => t.type === 'HSE').length})</h3>
           <div className="space-y-3">
@@ -857,10 +707,7 @@ function TemplatesPage() {
               <div key={t.id} className="flex items-center justify-between p-3 bg-dark-800 rounded-lg">
                 <div className="flex items-center gap-3">
                   <FileText className="w-5 h-5 text-secondary" />
-                  <div>
-                    <p className="font-medium">{t.name}</p>
-                    <p className="text-xs text-gray-500">{t.category} • {t.downloads} downloads</p>
-                  </div>
+                  <div><p className="font-medium">{t.name}</p><p className="text-xs text-gray-500">{t.category} • {t.downloads} downloads</p></div>
                 </div>
                 <div className="flex gap-2">
                   <button className="p-1 text-gray-400 hover:text-primary"><Edit className="w-4 h-4" /></button>
@@ -888,6 +735,7 @@ function AppearancePage() {
     { id: 2, url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop', title: 'HSE Documentation' },
   ]);
 
+  const [heroVideo, setHeroVideo] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -896,11 +744,39 @@ function AppearancePage() {
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    handleImageUpload(files);
   };
+
+  const handleImageUpload = (files) => {
+    files.forEach((file) => {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setHeroImages((prev) => [...prev, { id: Date.now() + Math.random(), url: e.target.result, title: file.name.replace(/\.[^/.]+$/, '') }]);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  };
+
+  const handleImageRemove = (id) => { setHeroImages((prev) => prev.filter((img) => img.id !== id)); };
+
+  const handleVideoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('video/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => { setHeroVideo({ id: Date.now(), url: e.target.result, name: file.name }); };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleVideoRemove = () => { setHeroVideo(null); };
 
   const saveSettings = () => {
     localStorage.setItem('siteSettings', JSON.stringify(settings));
     localStorage.setItem('heroImages', JSON.stringify(heroImages));
+    localStorage.setItem('heroVideo', JSON.stringify(heroVideo));
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -910,11 +786,9 @@ function AppearancePage() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Website Appearance</h1>
         <button onClick={saveSettings} className={`btn-primary flex items-center gap-2 ${saved ? 'bg-green-500' : ''}`}>
-          {saved ? <Check className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
-          {saved ? 'Saved!' : 'Save Changes'}
+          {saved ? <><Check className="w-4 h-4" /> Saved!</> : <><Upload className="w-4 h-4" /> Save Changes</>}
         </button>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="glass-card p-6">
           <h3 className="font-semibold mb-4">Color Scheme</h3>
@@ -935,7 +809,6 @@ function AppearancePage() {
             </div>
           </div>
         </div>
-
         <div className="glass-card p-6">
           <h3 className="font-semibold mb-4">Hero Section</h3>
           <div className="space-y-4">
@@ -948,6 +821,66 @@ function AppearancePage() {
               <textarea value={settings.heroSubtitle} onChange={(e) => setSettings({...settings, heroSubtitle: e.target.value})} className="input h-24" />
             </div>
           </div>
+        </div>
+      </div>
+      <div className="glass-card p-6">
+        <h3 className="font-semibold mb-4">Hero Images ({heroImages.length})</h3>
+        <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors mb-4 ${isDragging ? 'border-primary bg-primary/10' : 'border-dark-600'}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+          <input type="file" id="imageUpload" multiple accept="image/*" className="hidden" onChange={(e) => handleImageUpload(Array.from(e.target.files))} />
+          <label htmlFor="imageUpload" className="cursor-pointer">
+            <Image className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+            <p className="text-gray-400 mb-2">Drag and drop images here</p>
+            <button type="button" className="btn-primary mt-2">Browse Files</button>
+          </label>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {heroImages.map((img) => (
+            <div key={img.id} className="relative group">
+              <img src={img.url} alt={img.title} className="w-full h-24 object-cover rounded-lg" />
+              <button onClick={() => handleImageRemove(img.id)} className="absolute top-1 right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <X className="w-4 h-4 text-white" />
+              </button>
+              <p className="text-xs text-gray-400 mt-1 truncate">{img.title}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="glass-card p-6">
+        <h3 className="font-semibold mb-4">Hero Video {heroVideo && '(1 uploaded)'}</h3>
+        {heroVideo ? (
+          <div className="relative">
+            <video src={heroVideo.url} className="w-full h-48 object-cover rounded-lg" controls />
+            <button onClick={handleVideoRemove} className="absolute top-2 right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+              <X className="w-5 h-5 text-white" />
+            </button>
+            <p className="text-sm text-gray-400 mt-2">{heroVideo.name}</p>
+          </div>
+        ) : (
+          <div className="border-2 border-dashed border-dark-600 rounded-xl p-8 text-center">
+            <input type="file" id="videoUpload" accept="video/*" className="hidden" onChange={handleVideoUpload} />
+            <label htmlFor="videoUpload" className="cursor-pointer">
+              <Video className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400 mb-2">Upload background video (optional)</p>
+              <button type="button" className="btn-primary mt-2">Upload Video</button>
+            </label>
+          </div>
+        )}
+      </div>
+      <div className="glass-card p-6">
+        <h3 className="font-semibold mb-4">3D Effects</h3>
+        <div className="space-y-3">
+          <label className="flex items-center justify-between p-3 bg-dark-800 rounded-lg cursor-pointer">
+            <span>Enable 3D Background</span>
+            <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
+          </label>
+          <label className="flex items-center justify-between p-3 bg-dark-800 rounded-lg cursor-pointer">
+            <span>Auto-rotate Objects</span>
+            <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
+          </label>
+          <label className="flex items-center justify-between p-3 bg-dark-800 rounded-lg cursor-pointer">
+            <span>Particle Effects</span>
+            <input type="checkbox" defaultChecked className="w-5 h-5 rounded accent-primary" />
+          </label>
         </div>
       </div>
     </div>
@@ -973,7 +906,6 @@ function AnalyticsPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <div key={index} className="glass-card p-6">
@@ -983,7 +915,6 @@ function AnalyticsPage() {
           </div>
         ))}
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="glass-card p-6">
           <h3 className="font-semibold mb-4">Top Pages</h3>
@@ -996,7 +927,6 @@ function AnalyticsPage() {
             ))}
           </div>
         </div>
-
         <div className="glass-card p-6">
           <h3 className="font-semibold mb-4">Traffic Overview</h3>
           <div className="h-32 flex items-end justify-between gap-1">
@@ -1026,7 +956,6 @@ function SettingsPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">System Settings</h1>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="glass-card p-6">
           <h3 className="font-semibold mb-4">Payment Settings</h3>
@@ -1041,7 +970,6 @@ function SettingsPage() {
             </div>
           </div>
         </div>
-
         <div className="glass-card p-6">
           <h3 className="font-semibold mb-4">Pricing Plans</h3>
           <div className="space-y-4">
@@ -1060,7 +988,6 @@ function SettingsPage() {
           </div>
         </div>
       </div>
-
       <div className="flex justify-end">
         <button className="btn-primary">Save All Settings</button>
       </div>
