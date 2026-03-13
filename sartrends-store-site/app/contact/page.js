@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Mail, Phone, MapPin, Send, MessageSquare, Clock, HeadphonesIcon } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, MessageSquare, Clock, CheckCircle } from 'lucide-react'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -12,12 +12,55 @@ export default function ContactPage() {
     subject: '',
     message: ''
   })
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [whatsappLink, setWhatsappLink] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle form submission
-    alert('Thank you for your message! We will get back to you soon.')
+    setLoading(true)
+    setSuccess(false)
+    
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        setSuccess(true)
+        setWhatsappLink(data.whatsappLink || '')
+        // Automatically open WhatsApp with the message for the admin
+        const whatsappMessage = encodeURIComponent(
+          `*New Contact Message from SAR Trends Website*\n\n` +
+          `*Name:* ${formData.name}\n` +
+          `*Email:* ${formData.email}\n` +
+          `*Subject:* ${formData.subject || 'General Inquiry'}\n\n` +
+          `*Message:*\n${formData.message}`
+        )
+        const adminWhatsappLink = `https://wa.me/923454837460?text=${whatsappMessage}`
+        window.open(adminWhatsappLink, '_blank')
+        
+        // Reset form
+        setFormData({ name: '', email: '', subject: '', message: '' })
+      } else {
+        alert(data.message || 'Failed to send message')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Failed to send message. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
+
+  // Direct WhatsApp link
+  const whatsappNumber = '923454837460'
+  const defaultWhatsappMessage = encodeURIComponent('Hello SAR Trends, I need help with...')
+  const directWhatsappLink = `https://wa.me/${whatsappNumber}?text=${defaultWhatsappMessage}`
 
   const contactInfo = [
     {
@@ -94,16 +137,17 @@ export default function ContactPage() {
                 transition={{ delay: 0.3 }}
                 className="glass-card p-6"
               >
-                <h3 className="text-lg font-semibold mb-4">Payment Information</h3>
+                <h3 className="text-lg font-semibold mb-4">Quick Contact</h3>
                 <div className="space-y-3">
-                  <div>
-                    <p className="text-gray-400 text-sm">EasyPaisa</p>
-                    <p className="font-medium">+92 345 4837460</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 text-sm">Meezan Bank</p>
-                    <p className="font-medium">77010105779192</p>
-                  </div>
+                  <a
+                    href={directWhatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 bg-green-500/20 hover:bg-green-500/30 rounded-xl transition-colors"
+                  >
+                    <MessageSquare className="w-5 h-5 text-green-400" />
+                    <span className="font-medium">WhatsApp</span>
+                  </a>
                 </div>
               </motion.div>
             </div>
@@ -190,8 +234,7 @@ export default function ContactPage() {
             {[
               { q: 'How do I get started?', a: 'Simply sign up for free and start using our AI tools immediately.' },
               { q: 'What payment methods do you accept?', a: 'We accept EasyPaisa and bank transfers to Meezan Bank.' },
-              { q: 'How long does verification take?', a: 'Payment verification typically takes 24 hours.' },
-              { q: 'Can I cancel anytime?', a: 'Yes, you can cancel your subscription at any time.' }
+{ q: 'How long does verification take?', a: 'Payment verification typically takes 24 hours.' }
             ].map((faq, index) => (
               <div key={index} className="glass-card p-6">
                 <h3 className="font-semibold mb-2">{faq.q}</h3>

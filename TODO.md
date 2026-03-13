@@ -1,65 +1,9 @@
-# SAR Trends Project - TODO List
+# Task: Remove 14-day trial and cancel anytime references
 
-## Phase 1: Marketing Website (sartrends-store-site/)
-- [x] Initialize Next.js project with TailwindCSS
-- [x] Create layout components (Navbar, Footer)
-- [x] Build Home page
-- [x] Build Services page
-- [x] Build AI Tools page
-- [x] Build HSE Documentation Services page
-- [x] Build Resume Writing Services page
-- [x] Build Pricing page
-- [x] Build Blog page with SEO
-- [x] Build About page
-- [x] Build Contact page
+## Steps:
+- [x] Step 1: Edit sartrends-store-site/app/page.js - Remove trial/cancel badges from Trust Badges section
+- [x] Step 2: Edit sartrends-store-site/app/contact/page.js - Remove 'Can I cancel anytime?' FAQ item
+- [x] Step 3: Test local dev server
+- [x] Step 4: Complete task
 
-## Phase 2: AI SaaS Backend (sartrends-ai/backend/)
-- [x] Initialize Node.js project
-- [x] Create Express server
-- [x] Setup MongoDB connection
-- [x] Create User model
-- [x] Create Document model
-- [x] Create Payment model
-- [x] Implement Auth routes (login, register)
-- [x] Implement User routes
-- [x] Implement Document generation routes
-- [x] Implement Payment routes
-- [x] Create AI prompt templates
-
-## Phase 3: AI SaaS Frontend (sartrends-ai/frontend/)
-- [x] Initialize React project with TailwindCSS
-- [x] Create authentication pages
-- [x] Build Dashboard
-- [x] Build Resume Generator tool
-- [x] Build Cover Letter Generator
-- [x] Build HSE Document Generator
-- [x] Build Website Builder
-- [x] Build Payment/Plans page
-- [x] Build Profile page
-
-## Phase 4: Admin Panel (sartrends-ai/admin-panel/)
-- [x] Initialize React project
-- [x] Build Dashboard with analytics
-- [x] Build User Management
-- [x] Build Payment Verification
-- [x] Build Content Management
-
-## Phase 5: Mobile App Updates
-- [x] Update App.js with backend integration
-- [x] Add API service layer
-- [x] Update build scripts
-
-## Phase 6: Documentation & Deployment
-- [x] Create deployment instructions
-- [x] Create VS Code setup instructions
-- [x] Create install scripts
-- [x] Push code to GitHub
-- [x] Deploy to Vercel (https://sartrends.store/)
-- [x] Deploy backend to Render
-
----
-
-## ✅ PROJECT COMPLETED
-
-All phases completed successfully!
-
+Current: Changes applied successfully
