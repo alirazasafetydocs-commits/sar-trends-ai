@@ -185,9 +185,7 @@ export default function PricingPage() {
           <div className="max-w-3xl mx-auto space-y-4">
             {[
               { q: 'How does payment verification work?', a: 'After you make a payment, upload your payment screenshot. Our team will verify it within 24 hours and activate your account.' },
-              { q: 'Can I cancel anytime?', a: 'Yes, you can cancel your subscription at any time. Your access will continue until the end of your billing period.' },
               { q: 'What payment methods do you accept?', a: 'We accept EasyPaisa and bank transfers to Meezan Bank. Contact us for other payment options.' },
-              { q: 'Is there a refund policy?', a: 'Yes, we offer a 7-day money-back guarantee if you\'re not satisfied with our service.' },
             ].map((faq, index) => (
               <div key={index} className="glass-card p-6">
                 <h3 className="font-semibold mb-2">{faq.q}</h3>
