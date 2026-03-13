@@ -2,6 +2,7 @@ import './globals.css'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Metadata } from 'next'
+import WhatsAppFloatingButton from '../components/WhatsAppFloatingButton'
 
 export const metadata = {
   title: 'SAR Trends - AI Powered Professional Tools',
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
           {children}
         </main>
         <Footer />
+        <WhatsAppFloatingButton />
       </body>
     </html>
   )
