@@ -22,6 +22,17 @@ const documentSchema = new mongoose.Schema({
   inputData: {
     type: mongoose.Schema.Types.Mixed
   },
+  files: [{
+    name: String,
+    path: String,
+    type: String,
+    format: String,
+    watermark: {
+      type: Boolean,
+      default: false
+    }
+  }],
+  templateUsed: String,
   status: {
     type: String,
     enum: ['completed', 'processing', 'failed'],
