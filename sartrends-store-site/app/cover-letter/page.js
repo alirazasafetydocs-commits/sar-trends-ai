@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Loader, Copy } from 'lucide-react'
+import { Mail, Loader, Copy, Download } from 'lucide-react'
 
 export default function CoverLetterPage() {
   const [loading, setLoading] = useState(false)
@@ -47,6 +47,13 @@ export default function CoverLetterPage() {
       navigator.clipboard.writeText(text)
       alert('Copied to clipboard!')
     }
+  }
+
+  const handleDownload = (filePath) => {
+    const link = document.createElement('a')
+    link.href = `/uploads/documents/${filePath}`
+    link.download = filePath
+    link.click()
   }
 
   return (
