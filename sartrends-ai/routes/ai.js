@@ -8,6 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'sartrends-secret-key-2024';
 
 // AI Prompt Templates
 const prompts = require('../ai-prompts/prompts');
+const aiProvider = require('../services/aiProvider.js');
 
 // Middleware to verify token
 const auth = async (req, res, next) => {
@@ -51,14 +52,16 @@ const checkLimits = async (req, res, next) => {
 };
 
 // Generate ATS Resume
-router.post('/resume', auth, checkLimits, async (req, res) => {
+router.post('/resume', async (req, res) => { // TODO: Add optional auth
   try {
-    const { fullName, email, phone, summary, skills, experience, education } = req.body;
-
-    // Generate resume content (in production, this would call an AI API)
-    const resumeContent = generateResume({
-      fullName, email, phone, summary, skills, experience, education
-    });
+    const data = req.body;
+    let resumeContent;
+    try {
+      resumeContent = await aiProvider.generateResume(data);
+    } catch (error) {
+      console.error('AI failed for resume:', error);
+      resumeContent = aiProvider.getTemplate('resume', data);
+    }
 
     // Save document
     const document = new Document({
@@ -88,13 +91,16 @@ router.post('/resume', auth, checkLimits, async (req, res) => {
 });
 
 // Generate Cover Letter
-router.post('/cover-letter', auth, checkLimits, async (req, res) => {
+router.post('/cover-letter', async (req, res) => { // TODO: Add optional auth
   try {
-    const { position, company, manager, yourName, yourQualifications } = req.body;
-
-    const coverLetterContent = generateCoverLetter({
-      position, company, manager, yourName, yourQualifications
-    });
+    const data = req.body;
+    let coverLetterContent;
+    try {
+      coverLetterContent = await aiProvider.generateCoverLetter(data);
+    } catch (error) {
+      console.error('AI failed for cover letter:', error);
+      coverLetterContent = aiProvider.getTemplate('cover-letter', data);
+    }
 
     const document = new Document({
       user: req.user._id,

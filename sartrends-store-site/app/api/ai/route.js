@@ -61,7 +61,8 @@ export async function POST(request) {
     const { type } = body;
     
     // Proxy to backend
-    const backendResponse = await fetch(`http://localhost:3001/api/ai/${type}`, {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+    const backendResponse = await fetch(`${backendUrl}/api/ai/${type}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)

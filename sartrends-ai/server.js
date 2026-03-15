@@ -25,6 +25,8 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/templates', require('./routes/templates'));
 app.use('/api/ai', aiRoutes);
+app.use('/api/downloads', require('./routes/downloads'));
+app.use('/uploads', express.static('uploads'));
 
 // Health check
 app.get('/api/health', (req, res) => {
