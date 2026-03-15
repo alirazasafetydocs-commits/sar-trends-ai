@@ -192,9 +192,10 @@ export default function WebsiteBuilderPage() {
                         {result.files.map((file) => (
                           <a
                             key={file.type}
-                            href={`http://localhost:3001/uploads/${file.path}`}
-                            download={file.name}
-                            className="w-full bg-primary text-white py-2 px-4 rounded-lg text-center hover:bg-primary-dark flex items-center justify-center gap-2 no-underline"
+                            onClick={() => downloadFile('txt')} 
+                            className="w-full bg-primary text-white py-2 px-4 rounded-lg text-center hover:bg-primary-dark flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            Download Website Code
                           >
                             <Download className="w-4 h-4" />
                             Download {file.type.toUpperCase()} ({file.name})

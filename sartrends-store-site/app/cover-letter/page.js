@@ -51,9 +51,23 @@ export default function CoverLetterPage() {
 
   const handleDownload = (filePath) => {
     const link = document.createElement('a')
-    link.href = `/uploads/documents/${filePath}`
-    link.download = filePath
-    link.click()
+    async function downloadFile(type) {
+      try {
+        const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '';
+        const response = await fetch(`${backendUrl}/api/downloads/${type}/${result._id}`);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `coverletter.${type}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (error) {
+        alert('Download failed. Backend may not be running.');
+      }
+    }
   }
 
   return (
