@@ -65,9 +65,7 @@ router.post('/resume', async (req, res) => { // TODO: Add optional auth
 
     // Save document
     const document = new Document({
-      user: req.user._id,
-      type: 'resume',
-      title: `Resume - ${fullName}`,
+      user: req.user ? req.user._id : null,\n      type: 'resume',\n      title: `Resume - ${data.fullName || 'Your Resume'}`,
       content: resumeContent,
       inputData: req.body
     });
@@ -75,11 +73,7 @@ router.post('/resume', async (req, res) => { // TODO: Add optional auth
     await document.save();
 
     // Update user generations
-    if (req.user.plan === 'free') {
-      await User.findByIdAndUpdate(req.user._id, {
-        $inc: { generationsLeft: -1, totalGenerations: 1 }
-      });
-    }
+    if (req.user && req.user.plan === 'free') {\n      await User.findByIdAndUpdate(req.user._id, {\n        $inc: { generationsLeft: -1, totalGenerations: 1 }\n      });\n    }
 
     res.json({
       document,
