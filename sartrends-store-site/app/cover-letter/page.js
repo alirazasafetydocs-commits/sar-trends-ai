@@ -41,11 +41,28 @@ export default function CoverLetterPage() {
 
   const copyToClipboard = () => {
     if (result && result.content) {
-      const text = typeof result.content.generatedContent === 'string' 
-        ? result.content.generatedContent 
-        : JSON.stringify(result.content.generatedContent, null, 2)
+      const text = typeof result.content === 'string' ? result.content : typeof result.content.generatedContent === 'string' ? result.content.generatedContent : JSON.stringify(result.content, null, 2)
       navigator.clipboard.writeText(text)
       alert('Copied to clipboard!')
+    }
+  }
+
+  const downloadFile = async (format) => {
+    if (!result || !result._id) return;
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const res = await fetch(`/api/downloads/documents/${result._id}/download/${format}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${result.title}.${format}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      alert('Download failed. Upgrade for unlimited downloads.');
     }
   }
 
@@ -163,12 +180,19 @@ export default function CoverLetterPage() {
                     </pre>
                   </div>
                   
-                  <button
-                    onClick={copyToClipboard}
-                    className="w-full bg-dark-700 text-white py-2 px-4 rounded-lg hover:bg-dark-600 flex items-center justify-center gap-2"
-                  >
-                    <Copy className="w-4 h-4" /> Copy to Clipboard
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={copyToClipboard}
+                      className="flex-1 bg-dark-700 text-white py-2 px-4 rounded-lg hover:bg-dark-600 flex items-center justify-center gap-2"
+                    >
+                      <Copy className="w-4 h-4" /> Copy
+                    </button>
+                    {result?.files?.map((file, i) => (
+                      <button key={i} onClick={() => downloadFile(file.format)} className="bg-primary/90 text-white py-2 px-4 rounded-lg hover:bg-primary flex items-center gap-1 text-sm">
+                        {file.format.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <div className="text-center text-gray-500 py-12">
