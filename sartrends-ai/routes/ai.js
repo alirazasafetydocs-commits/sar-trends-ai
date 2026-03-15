@@ -41,11 +41,27 @@ const { generateDocumentFiles } = require('../services/fileGenerator');
 // Generate ATS Resume
 router.post('/resume', auth, limitUsage('resume'), async (req, res) => {
   try {
-    const { fullName, email, phone, summary, skills, experience, education } = req.body;
+    const { fullName, email, phone, summary, skills, experience, education, templateId } = req.body;
 
-    const resumeContent = generateResume({
+    let resumeContent = generateResume({
       fullName, email, phone, summary, skills, experience, education
     });
+
+    if (templateId) {
+      const Template = require('../models/Template');
+      const template = await Template.findById(templateId);
+      if (template) {
+        if (template.tier === 'premium' && req.user.plan !== 'pro' && req.user.plan !== 'business') {
+          return res.status(403).json({ message: 'Premium template requires Pro or Business plan' });
+        }
+        // Simple replace placeholders
+        let html = template.html;
+        Object.keys(req.body).forEach(key => {
+          html = html.replace(new RegExp(`{{${key}}}`, 'g'), req.body[key] || '');
+        });
+        resumeContent = { html, templateUsed: template.name };
+      }
+    }
 
     const title = `Resume - ${fullName}`;
     const contentStr = typeof resumeContent === 'string' ? resumeContent : JSON.stringify(resumeContent, null, 2);

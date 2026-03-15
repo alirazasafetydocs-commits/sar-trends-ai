@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
   },
   generationsLeft: {
     type: Number,
-    default: 5
+default: 3
   },
   totalGenerations: {
     type: Number,

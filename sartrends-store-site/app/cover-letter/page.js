@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Loader, Copy } from 'lucide-react'
+import { Mail, Loader, Copy, Download } from 'lucide-react'
 
 export default function CoverLetterPage() {
   const [loading, setLoading] = useState(false)
@@ -41,28 +41,32 @@ export default function CoverLetterPage() {
 
   const copyToClipboard = () => {
     if (result && result.content) {
-      const text = typeof result.content === 'string' ? result.content : typeof result.content.generatedContent === 'string' ? result.content.generatedContent : JSON.stringify(result.content, null, 2)
+      const text = typeof result.content.generatedContent === 'string' 
+        ? result.content.generatedContent 
+        : JSON.stringify(result.content.generatedContent, null, 2)
       navigator.clipboard.writeText(text)
       alert('Copied to clipboard!')
     }
   }
 
-  const downloadFile = async (format) => {
-    if (!result || !result._id) return;
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    const res = await fetch(`/api/downloads/documents/${result._id}/download/${format}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (res.ok) {
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${result.title}.${format}`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } else {
-      alert('Download failed. Upgrade for unlimited downloads.');
+  const handleDownload = (filePath) => {
+    const link = document.createElement('a')
+    async function downloadFile(type) {
+      try {
+        const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '';
+        const response = await fetch(`${backendUrl}/api/downloads/${type}/${result._id}`);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `coverletter.${type}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (error) {
+        alert('Download failed. Backend may not be running.');
+      }
     }
   }
 
@@ -180,19 +184,31 @@ export default function CoverLetterPage() {
                     </pre>
                   </div>
                   
-                  <div className="flex gap-2">
+
+                  <div className="space-y-2">
                     <button
                       onClick={copyToClipboard}
-                      className="flex-1 bg-dark-700 text-white py-2 px-4 rounded-lg hover:bg-dark-600 flex items-center justify-center gap-2"
+                      className="w-full bg-dark-700 text-white py-2 px-4 rounded-lg hover:bg-dark-600 flex items-center justify-center gap-2"
                     >
-                      <Copy className="w-4 h-4" /> Copy
+                      <Copy className="w-4 h-4" /> Copy to Clipboard
                     </button>
-                    {result?.files?.map((file, i) => (
-                      <button key={i} onClick={() => downloadFile(file.format)} className="bg-primary/90 text-white py-2 px-4 rounded-lg hover:bg-primary flex items-center gap-1 text-sm">
-                        {file.format.toUpperCase()}
-                      </button>
-                    ))}
+                    {result?.files?.length > 0 && (
+                      <div className="grid grid-cols-1 gap-2">
+                        {result.files.map((file) => (
+                          <a
+                            key={file.type}
+                            href={`http://localhost:3001/uploads/${file.path}`}
+                            download={file.name}
+                            className="w-full bg-primary text-white py-2 px-4 rounded-lg text-center hover:bg-primary-dark flex items-center justify-center gap-2 no-underline"
+                          >
+                            <Download className="w-4 h-4" />
+                            Download {file.type.toUpperCase()} ({file.name})
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
+
                 </div>
               ) : (
                 <div className="text-center text-gray-500 py-12">

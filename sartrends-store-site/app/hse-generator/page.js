@@ -173,12 +173,63 @@ export default function HSEGeneratorPage() {
                     </pre>
                   </div>
                   
-                  <button
-                    onClick={copyToClipboard}
-                    className="w-full bg-dark-700 text-white py-2 px-4 rounded-lg hover:bg-dark-600 flex items-center justify-center gap-2"
-                  >
-                    <Copy className="w-4 h-4" /> Copy to Clipboard
-                  </button>
+
+                  <div className="space-y-2">
+                    <button
+                      onClick={copyToClipboard}
+                      className="w-full bg-dark-700 text-white py-2 px-4 rounded-lg hover:bg-dark-600 flex items-center justify-center gap-2"
+                    >
+                      <Copy className="w-4 h-4" /> Copy to Clipboard
+                    </button>
+                    {result && (
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => downloadFile('pdf')}
+                          className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2"
+                        >
+                          <Download className="w-4 h-4" />
+                          Download PDF
+                        </button>
+                        <button
+                          onClick={() => downloadFile('docx')}
+                          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"
+                        >
+                          <Download className="w-4 h-4" />
+                          Download DOCX
+                        </button>
+                        <button
+                          onClick={() => downloadFile('txt')}
+                          className="w-full bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 flex items-center justify-center gap-2 col-span-2"
+                        >
+                          <Download className="w-4 h-4" />
+                          Download TXT
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {result && (
+                    <script>
+                      async function downloadFile(type) {
+                        try {
+                          const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '';
+                          const response = await fetch(`${backendUrl}/api/downloads/${type}/${result._id}`);
+                          const blob = await response.blob();
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `hse.${type}`;
+                          document.body.appendChild(a);
+                          a.click();
+                          window.URL.revokeObjectURL(url);
+                          document.body.removeChild(a);
+                        } catch (error) {
+                          alert('Download failed. Backend may not be running.');
+                        }
+                      }
+                    </script>
+                  )}
+
                 </div>
               ) : (
                 <div className="text-center text-gray-500 py-12">
