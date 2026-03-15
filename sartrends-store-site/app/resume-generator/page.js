@@ -18,6 +18,16 @@ export default function ResumeGeneratorPage() {
     education: ''
   })
 
+  const [templates, setTemplates] = useState([])
+  const [templateId, setTemplateId] = useState('')
+
+  useEffect(() => {
+    fetch('/api/templates?type=resume')
+      .then(r => r.json())
+      .then(({templates: ts}) => setTemplates(ts))
+      .catch(console.error)
+  }, [])
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const host = window.location.hostname
@@ -42,7 +52,7 @@ export default function ResumeGeneratorPage() {
       const response = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'resume', ...formData })
+        body: JSON.stringify({ type: 'resume', templateId, ...formData })
       })
 
       if (!response.ok) {
@@ -120,7 +130,7 @@ export default function ResumeGeneratorPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* form fields same */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Full Name *</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Full Name *</label>
                 <input
                   type="text"
                   name="fullName"
@@ -130,6 +140,21 @@ export default function ResumeGeneratorPage() {
                   placeholder="John Doe"
                   required
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Template</label>
+                <select
+                  value={templateId}
+                  onChange={(e) => setTemplateId(e.target.value)}
+                  className="w-full bg-dark-800 border border-dark-700 rounded-lg px-4 py-2 text-white focus:border-primary focus:outline-none"
+                >
+                  <option value="">Default</option>
+                  {templates.map((t) => (
+                    <option key={t._id} value={t._id}>
+                      {t.name} ({t.tier})
+                    </option>
+                  ))}
+                </select>
               </div>
               {/* ... other fields same */}
               <button
