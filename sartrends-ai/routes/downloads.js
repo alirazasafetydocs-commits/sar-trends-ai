@@ -1,62 +1,60 @@
 const express = require('express');
 const Document = require('../models/Document');
-const fileGen = require('../services/fileGenerator');
-const auth = require('../middleware/auth');
+const User = require('../models/User');
+const auth = require('./auth'); // Reuse auth from routes/auth or inline
+const fs = require('fs-extra');
 const path = require('path');
-const fs = require('fs');
 
 const router = express.Router();
 
-// Optional auth
-const optionalAuth = (req, res, next) => {
-  if (req.header('Authorization')) {
-    auth(req, res, next);
-  } else {
-    next();
-  }
-};
-
-// GET /api/downloads/pdf/:docId or /pdf/:type/:id
-router.get('/:format(pdf|docx|txt|png|mp4)/:docId', optionalAuth, async (req, res) => {
+// Download specific file for document
+router.get('/documents/:id/download/:format', auth, async (req, res) => {
   try {
-    const { format, docId } = req.params;
-    const doc = await Document.findById(docId);
-    if (!doc) {
-      return res.status(404).json({ error: 'Document not found' });
+    const { id, format } = req.params;
+    const document = await Document.findOne({ _id: id, user: req.user._id });
+
+    if (!document) {
+      return res.status(404).json({ message: 'Document not found' });
     }
 
-    const content = doc.content.generatedContent || doc.content.content || JSON.stringify(doc.content);
-    const filename = `${doc.type}-${docId.substring(0,8)}.${format}`;
-    let url;
+    const file = document.files.find(f => f.format === format.toLowerCase());
 
-    switch (format) {
-      case 'pdf':
-        url = await fileGen.generatePDF(content, filename);
-        break;
-      case 'docx':
-        url = await fileGen.generateDOCX(content, filename);
-        break;
-      case 'txt':
-        url = fileGen.generateTXT(content, filename);
-        break;
-      case 'png':
-        url = await fileGen.generatePNG(doc.inputData.prompt || 'demo', filename);
-        break;
-      case 'mp4':
-        url = await fileGen.generateMP4(doc.inputData.prompt || 'demo', filename);
-        break;
+    if (!file) {
+      return res.status(404).json({ message: 'File format not available' });
     }
 
-    res.json({ 
-      url, 
-      filename,
-      downloadUrl: url,
-      type: doc.type,
-      message: 'Download ready'
+    // Check free user download limits if watermark
+    if (req.user.plan === 'free' && file.watermark && req.user.dailyDownloads >= 3) {
+      return res.status(403).json({ message: 'Free download limit reached. Upgrade for unlimited.' });
+    }
+
+    const filePath = path.join(__dirname, '..', file.path);
+
+    if (!await fs.pathExists(filePath)) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    res.download(filePath, file.name, (err) => {
+      if (err) {
+        res.status(500).send('Could not download file. Try again.');
+      }
+      // Optional: Log download or inc counter
     });
   } catch (error) {
-    console.error('Download error:', error);
-    res.status(500).json({ error: 'Generation failed', details: error.message });
+    res.status(500).json({ message: 'Download error', error: error.message });
+  }
+});
+
+// List document files
+router.get('/documents/:id/files', auth, async (req, res) => {
+  try {
+    const document = await Document.findOne({ _id: req.params.id, user: req.user._id });
+    if (!document) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+    res.json({ files: document.files });
+  } catch (error) {
+    res.status(500).json({ message: 'Error', error: error.message });
   }
 });
 

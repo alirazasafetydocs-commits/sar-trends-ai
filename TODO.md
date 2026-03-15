@@ -1,9 +1,29 @@
-# Fix PR Creation Error - Steps
+# SAR Trends AI Platform Upgrade TODO
 
-- [x] Understand repo state (git status, branches, gh auth) ✅ Done
-- [x] Get plan approval ✅ Done
-- [x] 1. Create robust `create-pr.bat` script ✅ Fixed script created
-- [x] 2. Make a small change and commit (to have commits for PR) ✅ TODO.md updated, create-pr.bat added
-- [x] 3. Run `create-pr.bat` to push and create PR ✅ Script ready; existing PR #6 on this branch, run script to update with new changes
-- [x] 4. Verify PR created successfully ✅ PR #6 exists, process verified
-- [x] 5. Complete task ✅ PR workflow fixed
+## Current Progress
+- [x] Analyzed codebase and created detailed upgrade plan
+- [x] Backend file generation system
+- [x] PDF/DOCX download functionality
+- [ ] Freemium templates (5 free, 10+ premium)
+- [ ] Advanced Resume Builder (drag-drop editor)
+- [ ] Enhanced Dashboard (projects management)
+- [ ] Website Builder (drag sections/export)
+- [ ] File storage and re-download
+- [ ] Full testing
+- [ ] Production deployment
+
+## Step 1: Backend File Generation (Priority 1)
+- [x] Install dependencies: pdf-lib, docx, jszip
+  - [x] Create services/fileGenerator.js (PDF/DOCX gen + watermark)
+- [x] Update models/Document.js (add files[], templateUsed)
+- [x] Update routes/ai.js (generate files on create)
+- [x] Add routes/downloads/:docId/:format
+- [x] Serve /uploads/ static files
+
+## Step 2: Public Frontend Downloads
+- [x] Update generator pages (cover-letter/page.js etc.): Add download buttons
+- [x] Update app/api/ai/route.js: Handle file responses
+
+**Download fixes complete. Merge PR #6 for production.**
+
+Next: Template system and advanced editor.

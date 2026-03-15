@@ -12,6 +12,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads/documents')));
+
 // Routes
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -23,10 +27,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/payments', paymentRoutes);
-app.use('/api/templates', require('./routes/templates'));
 app.use('/api/ai', aiRoutes);
 app.use('/api/downloads', require('./routes/downloads'));
-app.use('/uploads', express.static('uploads'));
 
 // Health check
 app.get('/api/health', (req, res) => {

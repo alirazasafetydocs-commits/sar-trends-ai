@@ -8,7 +8,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'sartrends-secret-key-2024';
 
 // AI Prompt Templates
 const prompts = require('../ai-prompts/prompts');
-const aiProvider = require('../services/aiProvider.js');
 
 // Middleware to verify token
 const auth = async (req, res, next) => {
@@ -36,48 +35,39 @@ const auth = async (req, res, next) => {
   }
 };
 
-// Check generation limits
-const checkLimits = async (req, res, next) => {
-  const user = req.user;
-  
-  // Check if user has generations left (except for Pro/Business plans)
-  if (user.plan === 'free' && user.generationsLeft <= 0) {
-    return res.status(403).json({ 
-      message: 'No generations left. Please upgrade to Pro plan.',
-      upgradeRequired: true
-    });
-  }
-  
-  next();
-};
+const { limitUsage, recordUserUsage } = require('../middleware/usageLimiter');
+const { generateDocumentFiles } = require('../services/fileGenerator');
 
 // Generate ATS Resume
-router.post('/resume', async (req, res) => { // TODO: Add optional auth
+router.post('/resume', auth, limitUsage('resume'), async (req, res) => {
   try {
-    const data = req.body;
-    let resumeContent;
-    try {
-      resumeContent = await aiProvider.generateResume(data);
-    } catch (error) {
-      console.error('AI failed for resume:', error);
-      resumeContent = aiProvider.getTemplate('resume', data);
-    }
+    const { fullName, email, phone, summary, skills, experience, education } = req.body;
 
-    // Save document
+    const resumeContent = generateResume({
+      fullName, email, phone, summary, skills, experience, education
+    });
+
+    const title = `Resume - ${fullName}`;
+    const contentStr = typeof resumeContent === 'string' ? resumeContent : JSON.stringify(resumeContent, null, 2);
+    const files = await generateDocumentFiles(contentStr, title, 'resume', req.user.plan === 'free', req.user.name || req.user.email);
+
     const document = new Document({
-      user: req.user ? req.user._id : null,\n      type: 'resume',\n      title: `Resume - ${data.fullName || 'Your Resume'}`,
+      user: req.user._id,
+      type: 'resume',
+      title,
       content: resumeContent,
-      inputData: req.body
+      inputData: req.body,
+      files,
+      templateUsed: 'basic'
     });
 
     await document.save();
 
-    // Update user generations
-    if (req.user && req.user.plan === 'free') {\n      await User.findByIdAndUpdate(req.user._id, {\n        $inc: { generationsLeft: -1, totalGenerations: 1 }\n      });\n    }
+    await recordUserUsage(req.user._id, 'resume');
 
     res.json({
       document,
-      generationsLeft: req.user.plan === 'free' ? req.user.generationsLeft - 1 : 'unlimited'
+      files: document.files
     });
   } catch (error) {
     res.status(500).json({ message: 'Error generating resume', error: error.message });
@@ -85,41 +75,43 @@ router.post('/resume', async (req, res) => { // TODO: Add optional auth
 });
 
 // Generate Cover Letter
-router.post('/cover-letter', async (req, res) => { // TODO: Add optional auth
+router.post('/cover-letter', auth, limitUsage('cover-letter'), async (req, res) => {
   try {
-    const data = req.body;
-    let coverLetterContent;
-    try {
-      coverLetterContent = await aiProvider.generateCoverLetter(data);
-    } catch (error) {
-      console.error('AI failed for cover letter:', error);
-      coverLetterContent = aiProvider.getTemplate('cover-letter', data);
-    }
+    const { position, company, manager, yourName, yourQualifications } = req.body;
+
+    const coverLetterContent = generateCoverLetter({
+      position, company, manager, yourName, yourQualifications
+    });
+
+    const title = `Cover Letter - ${position} at ${company}`;
+    const contentStr = typeof coverLetterContent === 'string' ? coverLetterContent : JSON.stringify(coverLetterContent, null, 2);
+    const files = await generateDocumentFiles(contentStr, title, 'cover-letter', req.user.plan === 'free', req.user.name || req.user.email);
 
     const document = new Document({
       user: req.user._id,
       type: 'cover-letter',
-      title: `Cover Letter - ${position} at ${company}`,
+      title,
       content: coverLetterContent,
-      inputData: req.body
+      inputData: req.body,
+      files,
+      templateUsed: 'basic'
     });
 
     await document.save();
 
-    if (req.user.plan === 'free') {
-      await User.findByIdAndUpdate(req.user._id, {
-        $inc: { generationsLeft: -1, totalGenerations: 1 }
-      });
-    }
+    await recordUserUsage(req.user._id, 'cover-letter');
 
-    res.json({ document });
+    res.json({ 
+      document,
+      files: document.files 
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error generating cover letter', error: error.message });
   }
 });
 
 // Generate HSE Document
-router.post('/hse', auth, checkLimits, async (req, res) => {
+router.post('/hse', auth, limitUsage('hse'), async (req, res) => {
   try {
     const { documentType, projectName, scope, hazards, controls } = req.body;
 
@@ -147,30 +139,35 @@ router.post('/hse', auth, checkLimits, async (req, res) => {
         content = generateRiskAssessment({ projectName, scope, hazards, controls });
     }
 
+    const title = `${documentType.replace('-', ' ').toUpperCase()} - ${projectName}`;
+    const contentStr = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
+    const files = await generateDocumentFiles(contentStr, title, 'hse', req.user.plan === 'free', req.user.name || req.user.email);
+
     const document = new Document({
       user: req.user._id,
       type: documentType,
-      title: `${documentType.replace('-', ' ').toUpperCase()} - ${projectName}`,
+      title,
       content,
-      inputData: req.body
+      inputData: req.body,
+      files,
+      templateUsed: 'basic'
     });
 
     await document.save();
 
-    if (req.user.plan === 'free') {
-      await User.findByIdAndUpdate(req.user._id, {
-        $inc: { generationsLeft: -1, totalGenerations: 1 }
-      });
-    }
+    await recordUserUsage(req.user._id, 'hse');
 
-    res.json({ document });
+    res.json({ 
+      document,
+      files: document.files 
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error generating HSE document', error: error.message });
   }
 });
 
 // Generate Website
-router.post('/website', auth, checkLimits, async (req, res) => {
+router.post('/website', auth, limitUsage('website'), async (req, res) => {
   try {
     const { businessName, industry, services, brandStyle, email, phone, address } = req.body;
 
@@ -178,23 +175,28 @@ router.post('/website', auth, checkLimits, async (req, res) => {
       businessName, industry, services, brandStyle, email, phone, address
     });
 
+    const title = `Website - ${businessName}`;
+    const contentStr = typeof websiteContent === 'string' ? websiteContent : JSON.stringify(websiteContent, null, 2);
+    const files = await generateDocumentFiles(contentStr, title, 'website', req.user.plan === 'free', req.user.name || req.user.email);
+
     const document = new Document({
       user: req.user._id,
       type: 'website',
-      title: `Website - ${businessName}`,
+      title,
       content: websiteContent,
-      inputData: req.body
+      inputData: req.body,
+      files,
+      templateUsed: 'basic'
     });
 
     await document.save();
 
-    if (req.user.plan === 'free') {
-      await User.findByIdAndUpdate(req.user._id, {
-        $inc: { generationsLeft: -1, totalGenerations: 1 }
-      });
-    }
+    await recordUserUsage(req.user._id, 'website');
 
-    res.json({ document });
+    res.json({ 
+      document,
+      files: document.files 
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error generating website', error: error.message });
   }
