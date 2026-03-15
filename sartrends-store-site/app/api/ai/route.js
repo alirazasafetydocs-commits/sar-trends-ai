@@ -58,107 +58,29 @@ const SUPPORTED_TYPES = [
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { type, documentType, ...data } = body;
+    const { type } = body;
     
-    if (!type || !SUPPORTED_TYPES.includes(type)) {
-      return NextResponse.json(
-        { error: `Invalid document type. Supported: ${SUPPORTED_TYPES.join(', ')}` },
-        { status: 400 }
-      );
-    }
-    
-    let result = {};
-    let content = '';
-    let useTemplate = true;
-    
-    const useAI = !!process.env.OPENAI_API_KEY;
-    
-    if (useAI) {
-      try {
-        switch (type) {
-          case 'resume':
-            content = await generateResume(data);
-            break;
-          case 'cv':
-            content = await generateCV(data);
-            break;
-          case 'resume-optimize':
-            content = await optimizeResume(data);
-            break;
-          case 'cover-letter':
-            content = await generateCoverLetter(data);
-            break;
-          case 'follow-up-letter':
-            content = await generateFollowUpLetter(data);
-            break;
-          case 'risk-assessment':
-            content = await generateRiskAssessment(data);
-            break;
-          case 'RAMS':
-            content = await generateRAMS(data);
-            break;
-          case 'method-statement':
-            content = await generateMethodStatement(data);
-            break;
-          case 'JSA':
-            content = await generateJSA(data);
-            break;
-          case 'incident-report':
-            content = await generateIncidentReport(data);
-            break;
-          case 'fire-risk-assessment':
-            content = await generateFireRiskAssessment(data);
-            break;
-          case 'toolbox-talk':
-            content = await generateToolboxTalk(data);
-            break;
-          case 'website':
-            content = await generateWebsite(data);
-            break;
-          case 'website-code':
-            content = await generateWebsiteCode(data);
-            break;
-          case 'job-description':
-            content = await generateJobDescription(data);
-            break;
-          case 'business-proposal':
-            content = await generateBusinessProposal(data);
-            break;
-          case 'SOP':
-            content = await generateSOP(data);
-            break;
-          case 'linkedin-optimize':
-            content = await optimizeLinkedIn(data);
-            break;
-          default:
-            content = 'Document generated successfully';
-        }
-        useTemplate = false;
-      } catch (aiError) {
-        console.error('AI generation failed:', aiError);
-        useTemplate = true;
-      }
-    }
-    
-    if (useTemplate || !content) {
-      content = getTemplate(type, data);
-    }
-    
-    result = buildResult(type, data, content);
-    
-    return NextResponse.json({ 
-      document: result,
-      content: content,
-      type: type,
-      aiGenerated: !useTemplate,
-      message: useTemplate ? 'Template generated' : 'AI-generated document'
+    // Proxy to backend
+    const backendResponse = await fetch(`http://localhost:3001/api/ai/${type}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
     });
     
+    if (!backendResponse.ok) {
+      const error = await backendResponse.json();
+      return NextResponse.json(error, { status: backendResponse.status });
+    }
+    
+    const backendData = await backendResponse.json();
+    
+    return NextResponse.json(backendData);
+    
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('Proxy error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to generate document' },
-      { status: 500 }
+      { error: 'Backend unavailable. Please try later.' },
+      { status: 503 }
     );
   }
 }

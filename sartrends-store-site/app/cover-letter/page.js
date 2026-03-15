@@ -163,12 +163,31 @@ export default function CoverLetterPage() {
                     </pre>
                   </div>
                   
-                  <button
-                    onClick={copyToClipboard}
-                    className="w-full bg-dark-700 text-white py-2 px-4 rounded-lg hover:bg-dark-600 flex items-center justify-center gap-2"
-                  >
-                    <Copy className="w-4 h-4" /> Copy to Clipboard
-                  </button>
+
+                  <div className="space-y-2">
+                    <button
+                      onClick={copyToClipboard}
+                      className="w-full bg-dark-700 text-white py-2 px-4 rounded-lg hover:bg-dark-600 flex items-center justify-center gap-2"
+                    >
+                      <Copy className="w-4 h-4" /> Copy to Clipboard
+                    </button>
+                    {result?.files?.length > 0 && (
+                      <div className="grid grid-cols-1 gap-2">
+                        {result.files.map((file) => (
+                          <a
+                            key={file.type}
+                            href={`http://localhost:3001/uploads/${file.path}`}
+                            download={file.name}
+                            className="w-full bg-primary text-white py-2 px-4 rounded-lg text-center hover:bg-primary-dark flex items-center justify-center gap-2 no-underline"
+                          >
+                            <Download className="w-4 h-4" />
+                            Download {file.type.toUpperCase()} ({file.name})
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                 </div>
               ) : (
                 <div className="text-center text-gray-500 py-12">

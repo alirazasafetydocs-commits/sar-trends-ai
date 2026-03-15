@@ -23,6 +23,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/templates', require('./routes/templates'));
 app.use('/api/ai', aiRoutes);
 
 // Health check
